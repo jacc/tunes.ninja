@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+***REMOVED***
+
+generator client {
+  provider = "prisma-client-js"
+***REMOVED***
+
+model Guild {
+  id       String @id
+  reply_to Int    @default(7)
+***REMOVED***
+
+model Stats {
+  searches Int @id
+***REMOVED***
+
+model User {
+  id          String @id
+  lastfm      String @default("")
+  searches    Int    @default(0)
+  description String @default("A mysterious user.")
+***REMOVED***
+
+model JoshChannel {
+  id      String  @id
+  premium Boolean
+***REMOVED***
