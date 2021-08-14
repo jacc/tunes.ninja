@@ -1,7 +1,7 @@
-import {voted} from "../../inhibitors/voted";
-import {JoshAPI} from "../../services/api/josh";
-import {InteractionOptions} from "../../services/util/interactionOptions";
-import {ChatCommand} from "../../types/command";
+import { voted } from "../../inhibitors/voted";
+import { JoshAPI } from "../../services/api/josh";
+import { InteractionOptions } from "../../services/util/interactionOptions";
+import { ChatCommand } from "../../types/command";
 
 export const api: ChatCommand = {
   name: "api",
@@ -15,7 +15,8 @@ export const api: ChatCommand = {
     },
     {
       name: "unlink",
-      description: "Unlink your Spotify account to the tunes.ninja playlist API",
+      description:
+        "Unlink your Spotify account to the tunes.ninja playlist API",
       type: "SUB_COMMAND",
     },
   ],
