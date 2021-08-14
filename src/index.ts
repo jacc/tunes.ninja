@@ -71,6 +71,7 @@ client.on("ready", async () => {
 
     signale.success("Loaded all commands");
   } else {
+    signale.info("Setting application commands...");
     await client.application?.commands.set([
       ...chatCommandsMap.values(),
       ...messageCommandsMap.values(),
