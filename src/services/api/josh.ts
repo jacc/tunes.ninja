@@ -1,15 +1,19 @@
-import {CommandInteraction, Message, User} from "discord.js";
+import { CommandInteraction, Message, User } from "discord.js";
 import fetch from "node-fetch";
-import {JoshLink} from "../../types/josh";
-import {prisma} from "../prisma";
+import { JoshLink } from "../../types/josh";
+import { prisma } from "../prisma";
 
 export class JoshAPI {
-  public static async link(server: string, channel: string, user: string): Promise<string> {
-    const response = await fetch(`${process.env.JOSH_BASE}/login/user/spotify`, {
+  public static async link(
+    server: string,
+    channel: string,
+    user: string
+  ): Promise<string> {
+    const response = await fetch(`${process.env.JOSH_BASE}login/user/spotify`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
+        Authorization: `${process.env.JOSH_AUTH}`,
       },
       body: JSON.stringify({
         platform: "spotify",
@@ -29,11 +33,11 @@ export class JoshAPI {
 
   // TODO: fix unlink
   public static async unlink(user: string): Promise<boolean> {
-    const response = await fetch(`${process.env.JOSH_BASE}/unlink/spotify`, {
+    const response = await fetch(`${process.env.JOSH_BASE}unlink/spotify`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
+        Authorization: `${process.env.JOSH_AUTH}`,
       },
       body: JSON.stringify({
         discordUserID: user.toString(),
@@ -50,16 +54,19 @@ export class JoshAPI {
   }
 
   public static async play(user: string, song: string): Promise<string> {
-    const response = await fetch(`${process.env.JOSH_BASE}/spotify/user/${user}/action/play/song`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
-      },
-      body: JSON.stringify({
-        spotifyTrackID: song.toString(),
-      }),
-    });
+    const response = await fetch(
+      `${process.env.JOSH_BASE}spotify/user/${user}/action/play/song`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.JOSH_AUTH}`,
+        },
+        body: JSON.stringify({
+          spotifyTrackID: song.toString(),
+        }),
+      }
+    );
 
     const body = await response.json();
     if (response.status !== 200) {
@@ -68,20 +75,27 @@ export class JoshAPI {
     return body;
   }
 
-  public static async playlist(server: string, channel: string, user: string): Promise<JoshLink> {
-    const response = await fetch(`${process.env.JOSH_BASE}/link/playlist/creation`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
-      },
-      body: JSON.stringify({
-        platform: "spotify",
-        discordChannelID: channel.toString(),
-        discordServerID: server.toString(),
-        discordUserID: user.toString(),
-      }),
-    });
+  public static async playlist(
+    server: string,
+    channel: string,
+    user: string
+  ): Promise<JoshLink> {
+    const response = await fetch(
+      `${process.env.JOSH_BASE}link/playlist/creation`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.JOSH_AUTH}`,
+        },
+        body: JSON.stringify({
+          platform: "spotify",
+          discordChannelID: channel.toString(),
+          discordServerID: server.toString(),
+          discordUserID: user.toString(),
+        }),
+      }
+    );
 
     const body = await response.json();
     if (response.status !== 200) {
@@ -92,11 +106,11 @@ export class JoshAPI {
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public static async delete(channel: string): Promise<any> {
-    const response = await fetch(`${process.env.JOSH_BASE}/unlink/playlist`, {
+    const response = await fetch(`${process.env.JOSH_BASE}unlink/playlist`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
+        Authorization: `${process.env.JOSH_AUTH}`,
       },
       body: JSON.stringify({
         platform: "spotify",
@@ -118,7 +132,10 @@ export class JoshAPI {
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  public static async add(message: Message | CommandInteraction, url: string): Promise<any> {
+  public static async add(
+    message: Message | CommandInteraction,
+    url: string
+  ): Promise<any> {
     let author;
     if (message instanceof Message) {
       author = message.author;
@@ -130,11 +147,11 @@ export class JoshAPI {
       author = message.member;
     }
 
-    await fetch(`${process.env.JOSH_BASE}/add/new/song/premium`, {
+    await fetch(`${process.env.JOSH_BASE}add/new/song/premium`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
+        Authorization: `${process.env.JOSH_AUTH}`,
       },
       body: JSON.stringify({
         platform: "spotify",
@@ -151,13 +168,16 @@ export class JoshAPI {
   }
 
   public static async getPlaylists(user: string): Promise<any> {
-    const response = await fetch(`${process.env.JOSH_BASE}/playlists/${user}?fresh=true`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH}`,
-      },
-    });
+    const response = await fetch(
+      `${process.env.JOSH_BASE}playlists/${user}?fresh=true`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.JOSH_AUTH}`,
+        },
+      }
+    );
 
     const body = await response.json();
     if (response.status !== 200) {
@@ -172,12 +192,12 @@ export class JoshAPI {
     song: string
   ): Promise<any> {
     const response = await fetch(
-      `${process.env.JOSH_BASE}/user/${user}/playlist/${playlist}/add?song_id=${song}`,
+      `${process.env.JOSH_BASE}user/${user}/playlist/${playlist}/add?song_id=${song}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `${process.env.JOSH_AUTH}`,
+          Authorization: `${process.env.JOSH_AUTH}`,
         },
       }
     );
