@@ -1,23 +1,31 @@
 import "dotenv/config";
 
-import {Client, Intents} from "discord.js";
-import {chatCommandsMap, messageCommandsMap, userCommandsMap} from "./commands";
-import {StandardEmbed} from "./structs/standard-embed";
-import {prisma} from "./services/prisma";
-import {redis, wrapRedis} from "./services/redis";
-import {isDev, permer} from "./constants";
+import { Client, Intents } from "discord.js";
+import {
+  chatCommandsMap,
+  messageCommandsMap,
+  userCommandsMap,
+} from "./commands";
+import { StandardEmbed } from "./structs/standard-embed";
+import { prisma } from "./services/prisma";
+import { redis, wrapRedis } from "./services/redis";
+import { isDev, permer } from "./constants";
 import signale from "signale";
 import * as z from "zod";
-import {returnLinks} from "./services/reply-song";
-import {guildCreate, guildDelete, startupMessage} from "./services/events/logging";
-import {countSearches} from "./services/util/count";
-import {BotRatelimited, UnknownSong} from "./structs/exceptions";
-import {scheduleJob} from "node-schedule";
-import {handleInteraction} from "./services/events/interaction";
+import { returnLinks } from "./services/reply-song";
+import {
+  guildCreate,
+  guildDelete,
+  startupMessage,
+} from "./services/events/logging";
+import { countSearches } from "./services/util/count";
+import { BotRatelimited, UnknownSong } from "./structs/exceptions";
+import { scheduleJob } from "node-schedule";
+import { handleInteraction } from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
-import {VotesServer} from "./services/util/server";
+import { VotesServer } from "./services/util/server";
 
-const linkSchema = z.string().refine(x => {
+const linkSchema = z.string().refine((x) => {
   return (
     x.includes("open.spotify.com/track") ||
     x.includes("open.spotify.com/album") ||
@@ -33,7 +41,7 @@ myIntents.add(Intents.FLAGS.GUILDS);
 
 const client = new Client({
   intents: myIntents,
-  allowedMentions: {parse: ["users", "roles"], repliedUser: false},
+  allowedMentions: { parse: ["users", "roles"], repliedUser: false },
 });
 
 new VotesServer(client).start();
@@ -62,18 +70,22 @@ client.on("ready", async () => {
       ]);
 
     signale.success("Loaded all commands");
-    await startupMessage(client);
   } else {
-    await client.application?.commands.set([...chatCommandsMap.values()]);
+    await client.application?.commands.set([
+      ...chatCommandsMap.values(),
+      ...messageCommandsMap.values(),
+      ...userCommandsMap.values(),
+    ]);
     const ap = AutoPoster(process.env.TOPGG_AUTH!, client);
 
     ap.on("posted", () => {
-      signale.complete("Posted guild stats to top.gg");
+      signale.complete("Posted stats to top.gg!");
     });
+    await startupMessage(client);
   }
 });
 
-client.on("messageCreate", async message => {
+client.on("messageCreate", async (message) => {
   if (!message.guild || message.author.bot) return;
 
   const url = linkSchema.safeParse(message.content);
@@ -84,7 +96,7 @@ client.on("messageCreate", async message => {
       `settings:${message.guild!.id}`,
       () =>
         prisma.guild.findFirst({
-          where: {id: message.guild!.id},
+          where: { id: message.guild!.id },
         }),
       6000
     );
@@ -98,7 +110,7 @@ client.on("messageCreate", async message => {
 
     if (!matches) return;
 
-    matches.map(async link => {
+    matches.map(async (link) => {
       try {
         if (
           link.includes("spotify.com/track") ||
@@ -108,7 +120,10 @@ client.on("messageCreate", async message => {
           await returnLinks(message, link);
         }
 
-        if (link.includes("music.apple.com") && permer.test(guildSettings!.reply_to, "replyAM")) {
+        if (
+          link.includes("music.apple.com") &&
+          permer.test(guildSettings!.reply_to, "replyAM")
+        ) {
           await returnLinks(message, link);
         }
 
