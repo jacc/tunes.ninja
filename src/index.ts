@@ -1,30 +1,38 @@
 import "dotenv/config";
 
-import {Client, Intents***REMOVED*** from "discord.js";
-import {chatCommandsMap, messageCommandsMap, userCommandsMap***REMOVED*** from "./commands";
-import {StandardEmbed***REMOVED*** from "./structs/standard-embed";
-import {prisma***REMOVED*** from "./services/prisma";
-import {redis, wrapRedis***REMOVED*** from "./services/redis";
-import {isDev, permer***REMOVED*** from "./constants";
+import { Client, Intents } from "discord.js";
+import {
+  chatCommandsMap,
+  messageCommandsMap,
+  userCommandsMap,
+} from "./commands";
+import { StandardEmbed } from "./structs/standard-embed";
+import { prisma } from "./services/prisma";
+import { redis, wrapRedis } from "./services/redis";
+import { isDev, permer } from "./constants";
 import signale from "signale";
 import * as z from "zod";
-import {returnLinks***REMOVED*** from "./services/reply-song";
-import {guildCreate, guildDelete, startupMessage***REMOVED*** from "./services/events/logging";
-import {countSearches***REMOVED*** from "./services/util/count";
-import {BotRatelimited, UnknownSong***REMOVED*** from "./structs/exceptions";
-import {scheduleJob***REMOVED*** from "node-schedule";
-import {handleInteraction***REMOVED*** from "./services/events/interaction";
+import { returnLinks } from "./services/reply-song";
+import {
+  guildCreate,
+  guildDelete,
+  startupMessage,
+} from "./services/events/logging";
+import { countSearches } from "./services/util/count";
+import { BotRatelimited, UnknownSong } from "./structs/exceptions";
+import { scheduleJob } from "node-schedule";
+import { handleInteraction } from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
-import {VotesServer***REMOVED*** from "./services/util/server";
+import { VotesServer } from "./services/util/server";
 
-const linkSchema = z.string().refine(x => {
+const linkSchema = z.string().refine((x) => {
   return (
     x.includes("open.spotify.com/track") ||
     x.includes("open.spotify.com/album") ||
     x.includes("music.apple.com") ||
     x.includes("soundcloud.com")
   );
-***REMOVED***, "");
+}, "");
 
 const myIntents = new Intents();
 myIntents.add(Intents.FLAGS.GUILD_PRESENCES);
@@ -33,8 +41,8 @@ myIntents.add(Intents.FLAGS.GUILDS);
 
 const client = new Client({
   intents: myIntents,
-  allowedMentions: {parse: ["users", "roles"], repliedUser: false***REMOVED***,
-***REMOVED***
+  allowedMentions: { parse: ["users", "roles"], repliedUser: false },
+});
 
 new VotesServer(client).start();
 
@@ -47,10 +55,10 @@ client.on("ready", async () => {
     activities: [
       {
         type: "LISTENING",
-        name: `${count.toString() || 0***REMOVED*** links`,
-***REMOVED***
+        name: `${count.toString() || 0} links`,
+      },
     ],
-  ***REMOVED***
+  });
 
   if (isDev) {
     await client.guilds.cache
@@ -62,18 +70,22 @@ client.on("ready", async () => {
       ]);
 
     signale.success("Loaded all commands");
-    await startupMessage(client);
-***REMOVED*** else {
-    await client.application?.commands.set([...chatCommandsMap.values()]);
+  } else {
+    await client.application?.commands.set([
+      ...chatCommandsMap.values(),
+      ...messageCommandsMap.values(),
+      ...userCommandsMap.values(),
+    ]);
     const ap = AutoPoster(process.env.TOPGG_AUTH!, client);
 
     ap.on("posted", () => {
-      signale.complete("Posted guild stats to top.gg");
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+      signale.complete("Posted stats to top.gg!");
+    });
+    await startupMessage(client);
+  }
+});
 
-client.on("messageCreate", async message => {
+client.on("messageCreate", async (message) => {
   if (!message.guild || message.author.bot) return;
 
   const url = linkSchema.safeParse(message.content);
@@ -81,24 +93,24 @@ client.on("messageCreate", async message => {
     const matches = url.data.match(/\bhttps?:\/\/\S+/gi);
 
     let guildSettings = await wrapRedis(
-      `settings:${message.guild!.id***REMOVED***`,
+      `settings:${message.guild!.id}`,
       () =>
         prisma.guild.findFirst({
-          where: {id: message.guild!.id***REMOVED***,
-      ***REMOVED***),
+          where: { id: message.guild!.id },
+        }),
       6000
-***REMOVED***
+    );
     if (!guildSettings) {
       guildSettings = await prisma.guild.create({
         data: {
           id: message.guild!.id,
-  ***REMOVED***
-      ***REMOVED***
-  ***REMOVED***
+        },
+      });
+    }
 
     if (!matches) return;
 
-    matches.map(async link => {
+    matches.map(async (link) => {
       try {
         if (
           link.includes("spotify.com/track") ||
@@ -106,35 +118,38 @@ client.on("messageCreate", async message => {
             permer.test(guildSettings!.reply_to, "replySpotify"))
         ) {
           await returnLinks(message, link);
-      ***REMOVED***
+        }
 
-        if (link.includes("music.apple.com") && permer.test(guildSettings!.reply_to, "replyAM")) {
+        if (
+          link.includes("music.apple.com") &&
+          permer.test(guildSettings!.reply_to, "replyAM")
+        ) {
           await returnLinks(message, link);
-      ***REMOVED***
+        }
 
         if (
           link.includes("soundcloud.com") &&
           permer.test(guildSettings!.reply_to, "replySoundcloud")
         ) {
           await returnLinks(message, link);
-      ***REMOVED***
-    ***REMOVED*** catch (error) {
+        }
+      } catch (error) {
         if (error instanceof UnknownSong) {
           await message.react("❓");
-      ***REMOVED*** else if (error instanceof BotRatelimited) {
+        } else if (error instanceof BotRatelimited) {
           await message.reply({
             embeds: [
               new StandardEmbed(message.author).setDescription(
                 `The bot is currently ratelimited. Try again in a minute.`
               ),
             ],
-          ***REMOVED***
-      ***REMOVED***
+          });
+        }
         return;
-    ***REMOVED***
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+      }
+    });
+  }
+});
 
 client.on("interactionCreate", handleInteraction);
 client.on("guildCreate", guildCreate);
@@ -148,11 +163,11 @@ scheduleJob("*/10 * * * *", async () => {
     activities: [
       {
         type: "LISTENING",
-        name: `${count.toString() || 0***REMOVED*** links`,
-***REMOVED***
+        name: `${count.toString() || 0} links`,
+      },
     ],
-  ***REMOVED***
-***REMOVED***
+  });
+});
 
 prisma.$connect().then(async () => {
   signale.info("Connected to Database");
@@ -160,4 +175,4 @@ prisma.$connect().then(async () => {
   signale.info("Connected to Redis");
   await client.login(process.env.DISCORD_TOKEN);
   signale.info("Connected to Discord");
-***REMOVED***
+});

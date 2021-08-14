@@ -1,9 +1,9 @@
-import {MessageCommand***REMOVED*** from "../../types/command";
-import {JoshAPI***REMOVED*** from "../../services/api/josh";
-import {MessageEmbed***REMOVED*** from "discord.js";
-import {SongsApi***REMOVED*** from "../../services/api/song";
+import {MessageCommand} from "../../types/command";
+import {JoshAPI} from "../../services/api/josh";
+import {MessageEmbed} from "discord.js";
+import {SongsApi} from "../../services/api/song";
 import * as z from "zod";
-import {voted***REMOVED*** from "../../inhibitors/voted";
+import {voted} from "../../inhibitors/voted";
 
 const linkSchema = z.string().refine(x => {
   return (
@@ -12,7 +12,7 @@ const linkSchema = z.string().refine(x => {
     x.includes("music.apple.com") ||
     x.includes("soundcloud.com")
   );
-***REMOVED***, "");
+}, "");
 
 export const playOnSpotify: MessageCommand = {
   name: "Play on Spotify",
@@ -23,7 +23,7 @@ export const playOnSpotify: MessageCommand = {
 
     if (!url.success) {
       throw new Error("I couldn't find a valid song link in this message - check and try again.");
-  ***REMOVED***
+    }
 
     const song = await SongsApi.getLinks(url.data);
     const songId = song.links!.spotify!.split("https://open.spotify.com/track/")[1];
@@ -33,7 +33,7 @@ export const playOnSpotify: MessageCommand = {
 
     const embed = new MessageEmbed()
       .setAuthor(
-        `Now playing ${song.title***REMOVED*** by ${song.artist***REMOVED*** on Spotify`,
+        `Now playing ${song.title} by ${song.artist} on Spotify`,
         song.thumbnail ? song.thumbnail : ""
       )
       .setColor(0x212121);
@@ -41,6 +41,6 @@ export const playOnSpotify: MessageCommand = {
     await interaction.reply({
       embeds: [embed],
       ephemeral: true,
-    ***REMOVED***
-***REMOVED***,
-***REMOVED***;
+    });
+  },
+};

@@ -1,7 +1,7 @@
-import {voted***REMOVED*** from "../../inhibitors/voted";
-import {JoshAPI***REMOVED*** from "../../services/api/josh";
-import {InteractionOptions***REMOVED*** from "../../services/util/interactionOptions";
-import {ChatCommand***REMOVED*** from "../../types/command";
+import {voted} from "../../inhibitors/voted";
+import {JoshAPI} from "../../services/api/josh";
+import {InteractionOptions} from "../../services/util/interactionOptions";
+import {ChatCommand} from "../../types/command";
 
 export const api: ChatCommand = {
   name: "api",
@@ -12,38 +12,38 @@ export const api: ChatCommand = {
       name: "link",
       description: "Link your Spotify account to the tunes.ninja playlist API.",
       type: "SUB_COMMAND",
-  ***REMOVED***,
+    },
     {
       name: "unlink",
       description: "Unlink your Spotify account to the tunes.ninja playlist API",
       type: "SUB_COMMAND",
-  ***REMOVED***,
+    },
   ],
   inhibitors: [voted],
   async run(interaction) {
     const options = new InteractionOptions(
       interaction.options.data as unknown as InteractionOptions[]
-***REMOVED***
+    );
 
     if (options.subCommandName === "link") {
       const request = await JoshAPI.link(
         interaction.guild!.id,
         interaction.channel!.id,
         interaction.user.id
-  ***REMOVED***
+      );
 
       await interaction.reply({
-        content: `[Click here to link your Spotify account to tunes.ninja!](${request***REMOVED***)`,
+        content: `[Click here to link your Spotify account to tunes.ninja!](${request})`,
         ephemeral: true,
-      ***REMOVED***
-  ***REMOVED*** else if (options.subCommandName === "unlink") {
+      });
+    } else if (options.subCommandName === "unlink") {
       const request = await JoshAPI.unlink(interaction.user.id);
 
       if (!request) throw new Error("Internal error, do `/support");
       await interaction.reply({
         content: `If you had an account, it will be deleted!`,
         ephemeral: true,
-      ***REMOVED***
-  ***REMOVED***
-***REMOVED***,
-***REMOVED***;
+      });
+    }
+  },
+};

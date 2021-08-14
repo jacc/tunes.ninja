@@ -2,7 +2,7 @@ export interface JoshLink {
   linked: boolean;
   playlist: Playlist;
   playlistUrl: string;
-***REMOVED***
+}
 
 export interface Playlist {
   isPlaylistPremium: boolean;
@@ -15,4 +15,4 @@ export interface Playlist {
   playlistLinkedCredentials: string;
   playlistLinkedPlatformUniqueID: string;
   id: string;
-***REMOVED***
+}

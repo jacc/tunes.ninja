@@ -2,7 +2,7 @@ import IORedis from "ioredis";
 
 export const redis = new IORedis(process.env.REDIS_URL, {
   lazyConnect: true,
-***REMOVED***
+});
 
 /**
  * @param key The key for redis
@@ -21,7 +21,7 @@ export async function wrapRedis<T>(
 
   if (recent) {
     await redis.set(key, JSON.stringify(recent), "ex", seconds);
-***REMOVED***
+  }
 
   return recent;
-***REMOVED***
+}

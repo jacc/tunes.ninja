@@ -5,16 +5,16 @@ import {
   GuildMember,
   Interaction,
   SelectMenuInteraction,
-***REMOVED*** from "discord.js";
-import {chatCommandsMap, messageCommandsMap, userCommandsMap***REMOVED*** from "../../commands";
-import {StandardEmbed***REMOVED*** from "../../structs/standard-embed";
-import {JoshAPI***REMOVED*** from "../api/josh";
+} from "discord.js";
+import {chatCommandsMap, messageCommandsMap, userCommandsMap} from "../../commands";
+import {StandardEmbed} from "../../structs/standard-embed";
+import {JoshAPI} from "../api/josh";
 
 export async function handleInteraction(interaction: Interaction): Promise<void> {
   if (interaction.isContextMenu()) return await handleContextInteraction(interaction);
   if (interaction.isCommand()) return await handleMessageInteraction(interaction);
   if (interaction.isSelectMenu()) return await handleSelectInteraction(interaction);
-***REMOVED***
+}
 
 export async function handleContextInteraction(interaction: ContextMenuInteraction): Promise<void> {
   let command;
@@ -26,7 +26,7 @@ export async function handleContextInteraction(interaction: ContextMenuInteracti
     case "MESSAGE":
       command = messageCommandsMap.get(interaction.commandName);
       break;
-***REMOVED***
+  }
 
   if (!command) return;
 
@@ -35,10 +35,10 @@ export async function handleContextInteraction(interaction: ContextMenuInteracti
   try {
     for (const inhibitor of inhibitors) {
       await inhibitor(interaction);
-  ***REMOVED***
+    }
 
     await command.run(interaction);
-***REMOVED*** catch (e) {
+  } catch (e) {
     switch (true) {
       case e instanceof DiscordAPIError:
         break;
@@ -49,25 +49,25 @@ export async function handleContextInteraction(interaction: ContextMenuInteracti
               ephemeral: true,
               embeds: [
                 new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message***REMOVED***`
+                  `⚠ ${e.message}`
                 ),
               ],
-            ***REMOVED***
-        ***REMOVED*** else {
+            });
+          } else {
             await interaction.editReply({
               embeds: [
                 new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message***REMOVED***`
+                  `⚠ ${e.message}`
                 ),
               ],
-            ***REMOVED***
-        ***REMOVED***
-      ***REMOVED*** catch (error) {
+            });
+          }
+        } catch (error) {
           console.log("just give up");
-      ***REMOVED***
-  ***REMOVED***
-***REMOVED***
-***REMOVED***
+        }
+    }
+  }
+}
 
 export async function handleMessageInteraction(interaction: CommandInteraction): Promise<void> {
   const command = chatCommandsMap.get(interaction.commandName);
@@ -79,10 +79,10 @@ export async function handleMessageInteraction(interaction: CommandInteraction):
   try {
     for (const inhibitor of inhibitors) {
       await inhibitor(interaction);
-  ***REMOVED***
+    }
 
     await command.run(interaction);
-***REMOVED*** catch (e) {
+  } catch (e) {
     switch (true) {
       case e instanceof DiscordAPIError:
         break;
@@ -93,25 +93,25 @@ export async function handleMessageInteraction(interaction: CommandInteraction):
               ephemeral: true,
               embeds: [
                 new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message***REMOVED***`
+                  `⚠ ${e.message}`
                 ),
               ],
-            ***REMOVED***
-        ***REMOVED*** else {
+            });
+          } else {
             await interaction.editReply({
               embeds: [
                 new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message***REMOVED***`
+                  `⚠ ${e.message}`
                 ),
               ],
-            ***REMOVED***
-        ***REMOVED***
-      ***REMOVED*** catch (error) {
+            });
+          }
+        } catch (error) {
           console.log("just give up");
-      ***REMOVED***
-  ***REMOVED***
-***REMOVED***
-***REMOVED***
+        }
+    }
+  }
+}
 
 export async function handleSelectInteraction(interaction: SelectMenuInteraction): Promise<void> {
   await interaction.deferUpdate();
@@ -127,6 +127,6 @@ export async function handleSelectInteraction(interaction: SelectMenuInteraction
         ),
       ],
       components: [],
-    ***REMOVED***
-***REMOVED***
-***REMOVED***
+    });
+  }
+}

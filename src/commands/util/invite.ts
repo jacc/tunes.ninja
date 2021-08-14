@@ -1,4 +1,4 @@
-import {ChatCommand***REMOVED*** from "../../types/command";
+import {ChatCommand} from "../../types/command";
 
 export const invite: ChatCommand = {
   name: "invite",
@@ -7,6 +7,6 @@ export const invite: ChatCommand = {
   inhibitors: [],
   async run(interaction) {
     if (!interaction.isCommand()) return;
-    await interaction.reply({content: "https://tunes.ninja/invite", ephemeral: true***REMOVED***
-***REMOVED***,
-***REMOVED***;
+    await interaction.reply({content: "https://tunes.ninja/invite", ephemeral: true});
+  },
+};

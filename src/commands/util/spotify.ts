@@ -1,6 +1,6 @@
-import {GuildMember***REMOVED*** from "discord.js";
-import {returnLinks***REMOVED*** from "../../services/reply-song";
-import {ChatCommand***REMOVED*** from "../../types/command";
+import {GuildMember} from "discord.js";
+import {returnLinks} from "../../services/reply-song";
+import {ChatCommand} from "../../types/command";
 
 export const spotify: ChatCommand = {
   name: "spotify",
@@ -13,15 +13,15 @@ export const spotify: ChatCommand = {
 
     if (!member.presence) {
       throw new Error("No Spotify presence found - are you sure you're listening to something?");
-  ***REMOVED***
+    }
 
     const activity = member.presence.activities.find(
-      (activity: {name: string***REMOVED***) => activity.name === "Spotify"
-***REMOVED***
+      (activity: {name: string}) => activity.name === "Spotify"
+    );
     if (activity) {
-      await returnLinks(interaction, `https://open.spotify.com/track/${activity.syncId***REMOVED***`);
-  ***REMOVED*** else {
+      await returnLinks(interaction, `https://open.spotify.com/track/${activity.syncId}`);
+    } else {
       throw new Error("No Spotify presence found - are you sure you're listening to something?");
-  ***REMOVED***
-***REMOVED***,
-***REMOVED***;
+    }
+  },
+};

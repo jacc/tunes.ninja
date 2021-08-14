@@ -1,170 +1,170 @@
-import {CommandInteraction, Message, User***REMOVED*** from "discord.js";
+import {CommandInteraction, Message, User} from "discord.js";
 import fetch from "node-fetch";
-import {JoshLink***REMOVED*** from "../../types/josh";
-import {prisma***REMOVED*** from "../prisma";
+import {JoshLink} from "../../types/josh";
+import {prisma} from "../prisma";
 
 export class JoshAPI {
   public static async link(server: string, channel: string, user: string): Promise<string> {
-    const response = await fetch(`${process.env.JOSH_BASE***REMOVED***/login/user/spotify`, {
+    const response = await fetch(`${process.env.JOSH_BASE}/login/user/spotify`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
       body: JSON.stringify({
         platform: "spotify",
         discordChannelID: channel.toString(),
         discordServerID: server.toString(),
         discordUserID: user.toString(),
-    ***REMOVED***),
-    ***REMOVED***
+      }),
+    });
 
     const body = await response.json();
     if (response.status !== 200) {
       if (!body.detail) throw new Error(body.reason);
       if (body.detail) throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return body.url;
-***REMOVED***
+  }
 
   // TODO: fix unlink
   public static async unlink(user: string): Promise<boolean> {
-    const response = await fetch(`${process.env.JOSH_BASE***REMOVED***/unlink/spotify`, {
+    const response = await fetch(`${process.env.JOSH_BASE}/unlink/spotify`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
       body: JSON.stringify({
         discordUserID: user.toString(),
-    ***REMOVED***),
-    ***REMOVED***
+      }),
+    });
 
     const body = await response.json();
 
     if (response.status !== 200) {
       if (!body.detail) throw new Error(body.reason);
       if (body.detail) throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return true;
-***REMOVED***
+  }
 
   public static async play(user: string, song: string): Promise<string> {
-    const response = await fetch(`${process.env.JOSH_BASE***REMOVED***/spotify/user/${user***REMOVED***/action/play/song`, {
+    const response = await fetch(`${process.env.JOSH_BASE}/spotify/user/${user}/action/play/song`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
       body: JSON.stringify({
         spotifyTrackID: song.toString(),
-    ***REMOVED***),
-    ***REMOVED***
+      }),
+    });
 
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return body;
-***REMOVED***
+  }
 
   public static async playlist(server: string, channel: string, user: string): Promise<JoshLink> {
-    const response = await fetch(`${process.env.JOSH_BASE***REMOVED***/link/playlist/creation`, {
+    const response = await fetch(`${process.env.JOSH_BASE}/link/playlist/creation`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
       body: JSON.stringify({
         platform: "spotify",
         discordChannelID: channel.toString(),
         discordServerID: server.toString(),
         discordUserID: user.toString(),
-    ***REMOVED***),
-    ***REMOVED***
+      }),
+    });
 
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return body;
-***REMOVED***
+  }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public static async delete(channel: string): Promise<any> {
-    const response = await fetch(`${process.env.JOSH_BASE***REMOVED***/unlink/playlist`, {
+    const response = await fetch(`${process.env.JOSH_BASE}/unlink/playlist`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
       body: JSON.stringify({
         platform: "spotify",
         discordChannelID: channel.toString(),
-    ***REMOVED***),
-    ***REMOVED***
+      }),
+    });
 
     await prisma.joshChannel.delete({
       where: {
         id: channel.toString(),
-***REMOVED***
-    ***REMOVED***
+      },
+    });
 
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return body;
-***REMOVED***
+  }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   public static async add(message: Message | CommandInteraction, url: string): Promise<any> {
     let author;
     if (message instanceof Message) {
       author = message.author;
-  ***REMOVED***
+    }
     if (message instanceof CommandInteraction) {
       if (!message.deferred) {
         await message.deferReply();
-    ***REMOVED***
+      }
       author = message.member;
-  ***REMOVED***
+    }
 
-    await fetch(`${process.env.JOSH_BASE***REMOVED***/add/new/song/premium`, {
+    await fetch(`${process.env.JOSH_BASE}/add/new/song/premium`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
       body: JSON.stringify({
         platform: "spotify",
         discordChannelID: message.channel!.id.toString(),
         discordServerID: message.guild!.id.toString(),
         discordUserID: (author as User).id.toString(),
         url,
-    ***REMOVED***),
-    ***REMOVED***
+      }),
+    });
 
     if (message instanceof Message) {
       await message.react("🎶");
-  ***REMOVED***
-***REMOVED***
+    }
+  }
 
   public static async getPlaylists(user: string): Promise<any> {
-    const response = await fetch(`${process.env.JOSH_BASE***REMOVED***/playlists/${user***REMOVED***?fresh=true`, {
+    const response = await fetch(`${process.env.JOSH_BASE}/playlists/${user}?fresh=true`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-***REMOVED***
-    ***REMOVED***
+        "Authorization": `${process.env.JOSH_AUTH}`,
+      },
+    });
 
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return body;
-***REMOVED***
+  }
 
   public static async addPersonalPlaylist(
     user: string,
@@ -172,20 +172,20 @@ export class JoshAPI {
     song: string
   ): Promise<any> {
     const response = await fetch(
-      `${process.env.JOSH_BASE***REMOVED***/user/${user***REMOVED***/playlist/${playlist***REMOVED***/add?song_id=${song***REMOVED***`,
+      `${process.env.JOSH_BASE}/user/${user}/playlist/${playlist}/add?song_id=${song}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `${process.env.JOSH_AUTH***REMOVED***`,
-  ***REMOVED***
-    ***REMOVED***
-***REMOVED***
+          "Authorization": `${process.env.JOSH_AUTH}`,
+        },
+      }
+    );
 
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
-  ***REMOVED***
+    }
     return body;
-***REMOVED***
-***REMOVED***
+  }
+}

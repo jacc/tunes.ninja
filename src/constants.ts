@@ -1,4 +1,4 @@
-import {Permer***REMOVED*** from "permer";
+import {Permer} from "permer";
 
 /**
  * Whether or not the app is running in development mode
@@ -10,7 +10,7 @@ export enum Colors {
   YELLOW = "#ffff00",
   GREEN = "#63db5a",
   BLUE = "#3b88c3",
-***REMOVED***
+}
 
 export const contributors = [
   "268798547439255572",

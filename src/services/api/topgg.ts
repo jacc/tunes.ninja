@@ -1,8 +1,8 @@
-import {Interaction***REMOVED*** from "discord.js";
+import {Interaction} from "discord.js";
 import fetch from "node-fetch";
-import {redis***REMOVED*** from "../redis";
+import {redis} from "../redis";
 import * as logs from "../events/logging";
-import {isDev***REMOVED*** from "../../constants";
+import {isDev} from "../../constants";
 
 const TWELVE_HOURS_IN_SECONDS = 60 * 60 * 12;
 const TWELVE_HOURS_IN_MILLISECONDS = 43200000;
@@ -12,55 +12,55 @@ export class Topgg {
 
   constructor(clientId: string) {
     this.clientId = clientId;
-***REMOVED***
+  }
 
   private static readonly headers = {
-    Authorization: `${process.env.TOPGG_AUTH***REMOVED***`,
-***REMOVED*** as const;
+    Authorization: `${process.env.TOPGG_AUTH}`,
+  } as const;
 
   public async hasVoted(interaction: Interaction, user: string): Promise<boolean> {
     const request = await fetch(
       `https://top.gg/api/bots/${
         !isDev ? this.clientId : "840585628408217610"
-    ***REMOVED***/check?userId=${user***REMOVED***`,
+      }/check?userId=${user}`,
       {
         headers: Topgg.headers,
-    ***REMOVED***
-***REMOVED***
+      }
+    );
 
     const body = await request.json();
 
     if (!body) {
       throw new Error("User not found.");
-  ***REMOVED***
+    }
 
     if (body.voted === 1) {
       await logs.newVote(interaction.client, user);
 
       await redis.set(
-        `user:voted:${user***REMOVED***`,
+        `user:voted:${user}`,
         (Date.now() + TWELVE_HOURS_IN_MILLISECONDS).toString(),
         "ex",
         TWELVE_HOURS_IN_SECONDS
-  ***REMOVED***
+      );
       return true;
-  ***REMOVED*** else {
+    } else {
       return false;
-  ***REMOVED***
-***REMOVED***
+    }
+  }
 
-  public async getVotes(): Promise<{monthlyPoints: number; points: number***REMOVED***> {
+  public async getVotes(): Promise<{monthlyPoints: number; points: number}> {
     const request = await fetch(
-      `https://top.gg/api/bots/${!isDev ? this.clientId : "840585628408217610"***REMOVED***`,
+      `https://top.gg/api/bots/${!isDev ? this.clientId : "840585628408217610"}`,
       {
         headers: Topgg.headers,
-    ***REMOVED***
-***REMOVED***
+      }
+    );
 
     const body = await request.json();
     const monthlyPoints = body.monthlyPoints;
     const points = body.points;
 
-    return {monthlyPoints, points***REMOVED***;
-***REMOVED***
-***REMOVED***
+    return {monthlyPoints, points};
+  }
+}

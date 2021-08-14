@@ -12,5 +12,5 @@ export interface Song {
     tidal?: string;
     youtube?: string;
     youtube_music?: string;
-***REMOVED***;
-***REMOVED***
+  };
+}

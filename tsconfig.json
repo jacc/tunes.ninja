@@ -9,6 +9,6 @@
     "rootDir": "src",
     "outDir": "dist",
     "sourceMap": false
-***REMOVED***,
+  },
   "exclude": ["node_modules", "dist"]
-***REMOVED***
+}

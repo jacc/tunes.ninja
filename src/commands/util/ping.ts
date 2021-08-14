@@ -1,4 +1,4 @@
-import {ChatCommand***REMOVED*** from "../../types/command";
+import {ChatCommand} from "../../types/command";
 
 export const ping: ChatCommand = {
   name: "ping",
@@ -6,6 +6,6 @@ export const ping: ChatCommand = {
   type: "CHAT_INPUT",
   inhibitors: [],
   async run(interaction) {
-    await interaction.reply({content: ":ninja:", ephemeral: true***REMOVED***
-***REMOVED***,
-***REMOVED***;
+    await interaction.reply({content: ":ninja:", ephemeral: true});
+  },
+};
