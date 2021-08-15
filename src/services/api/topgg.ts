@@ -1,8 +1,8 @@
-import {Interaction} from "discord.js";
+import { Interaction } from "discord.js";
 import fetch from "node-fetch";
-import {redis} from "../redis";
+import { redis } from "../redis";
 import * as logs from "../events/logging";
-import {isDev} from "../../constants";
+import { isDev } from "../../constants";
 
 const TWELVE_HOURS_IN_SECONDS = 60 * 60 * 12;
 const TWELVE_HOURS_IN_MILLISECONDS = 43200000;
@@ -18,7 +18,10 @@ export class Topgg {
     Authorization: `${process.env.TOPGG_AUTH}`,
   } as const;
 
-  public async hasVoted(interaction: Interaction, user: string): Promise<boolean> {
+  public async hasVoted(
+    interaction: Interaction,
+    user: string
+  ): Promise<boolean> {
     const request = await fetch(
       `https://top.gg/api/bots/${
         !isDev ? this.clientId : "840585628408217610"
@@ -35,8 +38,7 @@ export class Topgg {
     }
 
     if (body.voted === 1) {
-      await logs.newVote(interaction.client, user);
-
+      // await logs.newVote(interaction.client, user);
       await redis.set(
         `user:voted:${user}`,
         (Date.now() + TWELVE_HOURS_IN_MILLISECONDS).toString(),
@@ -49,9 +51,11 @@ export class Topgg {
     }
   }
 
-  public async getVotes(): Promise<{monthlyPoints: number; points: number}> {
+  public async getVotes(): Promise<{ monthlyPoints: number; points: number }> {
     const request = await fetch(
-      `https://top.gg/api/bots/${!isDev ? this.clientId : "840585628408217610"}`,
+      `https://top.gg/api/bots/${
+        !isDev ? this.clientId : "840585628408217610"
+      }`,
       {
         headers: Topgg.headers,
       }
@@ -61,6 +65,6 @@ export class Topgg {
     const monthlyPoints = body.monthlyPoints;
     const points = body.points;
 
-    return {monthlyPoints, points};
+    return { monthlyPoints, points };
   }
 }
