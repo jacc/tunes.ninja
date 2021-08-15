@@ -1,5 +1,4 @@
 FROM node:latest
-EXPOSE 80
 WORKDIR /app
 ADD package.json .
 ADD yarn.lock .

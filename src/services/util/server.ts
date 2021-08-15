@@ -29,6 +29,6 @@ export class VotesServer extends AbstractAppService {
       })
     );
 
-    this.app.listen(process.env.SERVER_PORT || 80);
+    this.app.listen(process.env.SERVER_PORT || 8097);
   }
 }
