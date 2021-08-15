@@ -33,7 +33,13 @@ services:
       REDIS_URL: redis://redis
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
     command: yarn prod
+    networks:
+      - front
 
 volumes:
   redis_data:
   postgres_data:
+
+networks:
+  front:
+    driver: bridge
