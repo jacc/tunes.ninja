@@ -19,7 +19,7 @@ export const playOnSpotify: MessageCommand = {
   inhibitors: [voted],
   type: "MESSAGE",
   async run(interaction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
     const url = linkSchema.safeParse(
       interaction.options.get("message")!.message!.content
     );
@@ -45,9 +45,8 @@ export const playOnSpotify: MessageCommand = {
       )
       .setColor(0x212121);
 
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [embed],
-      ephemeral: true,
     });
   },
 };
