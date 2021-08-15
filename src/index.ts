@@ -18,12 +18,14 @@ import {
   guildDelete,
   startupMessage,
 } from "./services/events/logging";
-import { countSearches } from "./services/util/count";
+import { countProfiles, countSearches } from "./services/util/count";
 import { BotRatelimited, UnknownSong } from "./structs/exceptions";
 import { scheduleJob } from "node-schedule";
 import { handleInteraction } from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
 import { VotesServer } from "./services/util/server";
+import { DataDog } from "./services/api/datadog";
+import { Topgg } from "./services/api/topgg";
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -45,6 +47,7 @@ const client = new Client({
 });
 
 new VotesServer(client).start();
+const dd = new DataDog();
 
 client.on("ready", async () => {
   signale.info("Environment:", isDev ? "dev" : "prod");
@@ -168,6 +171,17 @@ scheduleJob("*/10 * * * *", async () => {
       },
     ],
   });
+});
+
+scheduleJob("* * * * *", async () => {
+  const songs = await countSearches();
+  const profiles = await countProfiles();
+  const guilds = await client.guilds.cache.size;
+  const votes = await new Topgg(client.user!.id).getVotes();
+  await dd.send("bot.guilds", guilds);
+  await dd.send("bot.songs", songs);
+  await dd.send("bot.profiles", profiles);
+  await dd.send("bot.votes", votes.monthlyPoints);
 });
 
 prisma.$connect().then(async () => {

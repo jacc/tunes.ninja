@@ -12,7 +12,10 @@ import {
   userCommandsMap,
 } from "../../commands";
 import { StandardEmbed } from "../../structs/standard-embed";
+import { DataDog } from "../api/datadog";
 import { JoshAPI } from "../api/josh";
+
+const dd = new DataDog();
 
 export async function handleInteraction(
   interaction: Interaction
@@ -51,6 +54,7 @@ export async function handleContextInteraction(
     }
 
     await command.run(interaction);
+    await dd.inc(`interactions.ContextMenuInteraction.run`);
   } catch (e) {
     switch (true) {
       case e instanceof DiscordAPIError:
@@ -99,6 +103,7 @@ export async function handleMessageInteraction(
     }
 
     await command.run(interaction);
+    await dd.inc(`interactions.CommandInteraction.run`);
   } catch (e) {
     switch (true) {
       case e instanceof DiscordAPIError:
@@ -148,4 +153,5 @@ export async function handleSelectInteraction(
       components: [],
     });
   }
+  await dd.inc(`interactions.SelectMenuInteraction.run`);
 }
