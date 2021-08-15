@@ -1,11 +1,11 @@
-import {MessageCommand} from "../../types/command";
-import {JoshAPI} from "../../services/api/josh";
-import {MessageEmbed} from "discord.js";
-import {SongsApi} from "../../services/api/song";
+import { MessageCommand } from "../../types/command";
+import { JoshAPI } from "../../services/api/josh";
+import { MessageEmbed } from "discord.js";
+import { SongsApi } from "../../services/api/song";
 import * as z from "zod";
-import {voted} from "../../inhibitors/voted";
+import { voted } from "../../inhibitors/voted";
 
-const linkSchema = z.string().refine(x => {
+const linkSchema = z.string().refine((x) => {
   return (
     x.includes("open.spotify.com/track") ||
     x.includes("open.spotify.com/album") ||
@@ -19,14 +19,21 @@ export const playOnSpotify: MessageCommand = {
   inhibitors: [voted],
   type: "MESSAGE",
   async run(interaction) {
-    const url = linkSchema.safeParse(interaction.options.get("message")!.message!.content);
+    await interaction.deferReply();
+    const url = linkSchema.safeParse(
+      interaction.options.get("message")!.message!.content
+    );
 
     if (!url.success) {
-      throw new Error("I couldn't find a valid song link in this message - check and try again.");
+      throw new Error(
+        "I couldn't find a valid song link in this message - check and try again."
+      );
     }
 
     const song = await SongsApi.getLinks(url.data);
-    const songId = song.links!.spotify!.split("https://open.spotify.com/track/")[1];
+    const songId = song.links!.spotify!.split(
+      "https://open.spotify.com/track/"
+    )[1];
 
     // TODO: add handling if errors
     await JoshAPI.play(interaction.user!.id, songId);
