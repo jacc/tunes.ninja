@@ -173,7 +173,7 @@ scheduleJob("*/10 * * * *", async () => {
   });
 });
 
-scheduleJob("* * * * *", async () => {
+scheduleJob("*/5 * * * *", async () => {
   const songs = await countSearches();
   const profiles = await countProfiles();
   const guilds = await client.guilds.cache.size;

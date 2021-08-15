@@ -6,10 +6,13 @@ import {
   MessageButton,
   User,
 } from "discord.js";
-import {StandardEmbed} from "../structs/standard-embed";
-import {JoshAPI} from "./api/josh";
-import {SongsApi} from "./api/song";
-import {incrementSearches, prisma} from "./prisma";
+import { StandardEmbed } from "../structs/standard-embed";
+import { DataDog } from "./api/datadog";
+import { JoshAPI } from "./api/josh";
+import { SongsApi } from "./api/song";
+import { incrementSearches, prisma } from "./prisma";
+
+const dd = new DataDog();
 
 export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
@@ -31,21 +34,21 @@ export async function returnLinks(
 
   // TODO: redo this eventually
   let group;
-  if (Object.entries(song.links).filter(link => link[1]).length === 6) {
+  if (Object.entries(song.links).filter((link) => link[1]).length === 6) {
     group = chunk(
-      Object.entries(song.links).filter(link => link[1]),
+      Object.entries(song.links).filter((link) => link[1]),
       3
     );
   } else {
     group = chunk(
-      Object.entries(song.links).filter(link => link[1]),
+      Object.entries(song.links).filter((link) => link[1]),
       5
     );
   }
 
-  const rows = group.map(chunks => {
+  const rows = group.map((chunks) => {
     const row = new MessageActionRow();
-    chunks.map(chunk => {
+    chunks.map((chunk) => {
       return row.addComponents(
         new MessageButton()
           .setStyle("LINK")
@@ -68,9 +71,9 @@ export async function returnLinks(
   }
 
   if (message instanceof Message) {
-    await message.reply({embeds: [embed], components: rows});
+    await message.reply({ embeds: [embed], components: rows });
   } else {
-    await message.editReply({embeds: [embed], components: rows});
+    await message.editReply({ embeds: [embed], components: rows });
   }
 
   const channel = await prisma.joshChannel.findUnique({
@@ -83,6 +86,7 @@ export async function returnLinks(
     await JoshAPI.add(message, link);
   }
   await incrementSearches(author as User);
+  await dd.inc("interactions.song");
 }
 
 function chunk<T>(array: T[], size: number): T[][] {
