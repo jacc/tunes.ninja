@@ -6,17 +6,28 @@ import {
   Interaction,
   SelectMenuInteraction,
 } from "discord.js";
-import {chatCommandsMap, messageCommandsMap, userCommandsMap} from "../../commands";
-import {StandardEmbed} from "../../structs/standard-embed";
-import {JoshAPI} from "../api/josh";
+import {
+  chatCommandsMap,
+  messageCommandsMap,
+  userCommandsMap,
+} from "../../commands";
+import { StandardEmbed } from "../../structs/standard-embed";
+import { JoshAPI } from "../api/josh";
 
-export async function handleInteraction(interaction: Interaction): Promise<void> {
-  if (interaction.isContextMenu()) return await handleContextInteraction(interaction);
-  if (interaction.isCommand()) return await handleMessageInteraction(interaction);
-  if (interaction.isSelectMenu()) return await handleSelectInteraction(interaction);
+export async function handleInteraction(
+  interaction: Interaction
+): Promise<void> {
+  if (interaction.isContextMenu())
+    return await handleContextInteraction(interaction);
+  if (interaction.isCommand())
+    return await handleMessageInteraction(interaction);
+  if (interaction.isSelectMenu())
+    return await handleSelectInteraction(interaction);
 }
 
-export async function handleContextInteraction(interaction: ContextMenuInteraction): Promise<void> {
+export async function handleContextInteraction(
+  interaction: ContextMenuInteraction
+): Promise<void> {
   let command;
 
   switch (interaction.targetType) {
@@ -30,7 +41,9 @@ export async function handleContextInteraction(interaction: ContextMenuInteracti
 
   if (!command) return;
 
-  const inhibitors = Array.isArray(command.inhibitors) ? command.inhibitors : [command.inhibitors];
+  const inhibitors = Array.isArray(command.inhibitors)
+    ? command.inhibitors
+    : [command.inhibitors];
 
   try {
     for (const inhibitor of inhibitors) {
@@ -48,17 +61,17 @@ export async function handleContextInteraction(interaction: ContextMenuInteracti
             await interaction.reply({
               ephemeral: true,
               embeds: [
-                new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message}`
-                ),
+                new StandardEmbed(
+                  interaction.member as GuildMember
+                ).setDescription(`⚠ ${e.message}`),
               ],
             });
           } else {
             await interaction.editReply({
               embeds: [
-                new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message}`
-                ),
+                new StandardEmbed(
+                  interaction.member as GuildMember
+                ).setDescription(`⚠ ${e.message}`),
               ],
             });
           }
@@ -69,12 +82,16 @@ export async function handleContextInteraction(interaction: ContextMenuInteracti
   }
 }
 
-export async function handleMessageInteraction(interaction: CommandInteraction): Promise<void> {
+export async function handleMessageInteraction(
+  interaction: CommandInteraction
+): Promise<void> {
   const command = chatCommandsMap.get(interaction.commandName);
 
   if (!command) return;
 
-  const inhibitors = Array.isArray(command.inhibitors) ? command.inhibitors : [command.inhibitors];
+  const inhibitors = Array.isArray(command.inhibitors)
+    ? command.inhibitors
+    : [command.inhibitors];
 
   try {
     for (const inhibitor of inhibitors) {
@@ -92,17 +109,17 @@ export async function handleMessageInteraction(interaction: CommandInteraction):
             await interaction.reply({
               ephemeral: true,
               embeds: [
-                new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message}`
-                ),
+                new StandardEmbed(
+                  interaction.member as GuildMember
+                ).setDescription(`⚠ ${e.message}`),
               ],
             });
           } else {
             await interaction.editReply({
               embeds: [
-                new StandardEmbed(interaction.member as GuildMember).setDescription(
-                  `⚠ ${e.message}`
-                ),
+                new StandardEmbed(
+                  interaction.member as GuildMember
+                ).setDescription(`⚠ ${e.message}`),
               ],
             });
           }
@@ -113,7 +130,9 @@ export async function handleMessageInteraction(interaction: CommandInteraction):
   }
 }
 
-export async function handleSelectInteraction(interaction: SelectMenuInteraction): Promise<void> {
+export async function handleSelectInteraction(
+  interaction: SelectMenuInteraction
+): Promise<void> {
   await interaction.deferUpdate();
   const userId = interaction.customId.split("select_")[1];
   const playlistId = interaction.values[0].split("_")[1];

@@ -19,7 +19,8 @@ export const playlists: MessageCommand = {
   inhibitors: [voted],
   type: "MESSAGE",
   async run(interaction) {
-    await interaction.deferReply();
+    await interaction.deferReply({ ephemeral: true });
+
     const url = linkSchema.safeParse(
       interaction.options.get("message")!.message!.content
     );
@@ -65,10 +66,9 @@ export const playlists: MessageCommand = {
       )
       .setFooter("Playlist not showing? Discord only has 25 select options");
 
-    await interaction.reply({
+    await interaction.editReply({
       embeds: [embed],
       components: [row],
-      ephemeral: true,
     });
   },
 };
