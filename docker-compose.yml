@@ -37,3 +37,7 @@ services:
 volumes:
   redis_data:
   postgres_data:
+
+networks:
+  front:
+    driver: bridge
