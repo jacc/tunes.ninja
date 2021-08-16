@@ -33,6 +33,7 @@ export async function handleInteraction(
 export async function handleContextInteraction(
   interaction: ContextMenuInteraction
 ): Promise<void> {
+  dd.inc(`interactions.ContextMenuInteraction.run`);
   let command;
 
   switch (interaction.targetType) {
@@ -56,7 +57,6 @@ export async function handleContextInteraction(
     }
 
     await command.run(interaction);
-    await dd.inc(`interactions.ContextMenuInteraction.run`);
   } catch (e) {
     switch (true) {
       case e instanceof DiscordAPIError:
@@ -91,6 +91,7 @@ export async function handleContextInteraction(
 export async function handleMessageInteraction(
   interaction: CommandInteraction
 ): Promise<void> {
+  dd.inc(`interactions.CommandInteraction.run`);
   const command = chatCommandsMap.get(interaction.commandName);
 
   if (!command) return;
@@ -105,7 +106,6 @@ export async function handleMessageInteraction(
     }
 
     await command.run(interaction);
-    await dd.inc(`interactions.CommandInteraction.run`);
   } catch (e) {
     switch (true) {
       case e instanceof DiscordAPIError:
@@ -141,6 +141,7 @@ export async function handleSelectInteraction(
   interaction: SelectMenuInteraction
 ): Promise<void> {
   await interaction.deferUpdate();
+  dd.inc(`interactions.SelectMenuInteraction.run`);
   const userId = interaction.customId.split("select_")[1];
   const playlistId = interaction.values[0].split("_")[1];
   const songId = interaction.values[0].split("_")[2];
@@ -155,13 +156,13 @@ export async function handleSelectInteraction(
       components: [],
     });
   }
-  await dd.inc(`interactions.SelectMenuInteraction.run`);
 }
 
 export async function handleButtonInteraction(
   interaction: ButtonInteraction
 ): Promise<void> {
   await interaction.deferUpdate();
+  dd.inc(`interactions.ButtonInteraction.run`);
   const platform = interaction.customId.split("button_")[1];
   const request = await JoshAPI.link(
     interaction.guild!.id,
@@ -171,5 +172,4 @@ export async function handleButtonInteraction(
   );
 
   console.log(request);
-  await dd.inc(`interactions.ButtonInteraction.run`);
 }
