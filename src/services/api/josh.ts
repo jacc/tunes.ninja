@@ -7,21 +7,25 @@ export class JoshAPI {
   public static async link(
     server: string,
     channel: string,
-    user: string
+    user: string,
+    platform: string
   ): Promise<string> {
-    const response = await fetch(`${process.env.JOSH_BASE}login/user/spotify`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `${process.env.JOSH_AUTH}`,
-      },
-      body: JSON.stringify({
-        platform: "spotify",
-        discordChannelID: channel.toString(),
-        discordServerID: server.toString(),
-        discordUserID: user.toString(),
-      }),
-    });
+    const response = await fetch(
+      `${process.env.JOSH_BASE}login/user/${platform}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.JOSH_AUTH}`,
+        },
+        body: JSON.stringify({
+          platform: platform.toString(),
+          discordChannelID: channel.toString(),
+          discordServerID: server.toString(),
+          discordUserID: user.toString(),
+        }),
+      }
+    );
 
     const body = await response.json();
     if (response.status !== 200) {
@@ -31,9 +35,28 @@ export class JoshAPI {
     return body.url;
   }
 
-  // TODO: fix unlink
-  public static async unlink(user: string): Promise<boolean> {
-    const response = await fetch(`${process.env.JOSH_BASE}unlink/spotify`, {
+  public static async user(user: string): Promise<string> {
+    const response = await fetch(
+      `${process.env.JOSH_BASE}/linked/user/${user}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.JOSH_AUTH}`,
+        },
+      }
+    );
+
+    const body = await response.json();
+    if (response.status !== 200) {
+      if (!body.detail) throw new Error(body.reason);
+      if (body.detail) throw new Error(body.detail.reason);
+    }
+    return body;
+  }
+
+  public static async unlink(user: string, platform: string): Promise<boolean> {
+    const response = await fetch(`${process.env.JOSH_BASE}unlink/${platform}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

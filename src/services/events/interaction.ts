@@ -1,4 +1,5 @@
 import {
+  ButtonInteraction,
   CommandInteraction,
   ContextMenuInteraction,
   DiscordAPIError,
@@ -26,6 +27,7 @@ export async function handleInteraction(
     return await handleMessageInteraction(interaction);
   if (interaction.isSelectMenu())
     return await handleSelectInteraction(interaction);
+  if (interaction.isButton()) return await handleButtonInteraction(interaction);
 }
 
 export async function handleContextInteraction(
@@ -154,4 +156,20 @@ export async function handleSelectInteraction(
     });
   }
   await dd.inc(`interactions.SelectMenuInteraction.run`);
+}
+
+export async function handleButtonInteraction(
+  interaction: ButtonInteraction
+): Promise<void> {
+  await interaction.deferUpdate();
+  const platform = interaction.customId.split("button_")[1];
+  const request = await JoshAPI.link(
+    interaction.guild!.id,
+    interaction.channel!.id,
+    interaction.user!.id,
+    platform
+  );
+
+  console.log(request);
+  await dd.inc(`interactions.ButtonInteraction.run`);
 }

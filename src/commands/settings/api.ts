@@ -1,3 +1,4 @@
+import { MessageActionRow, MessageButton } from "discord.js";
 import { voted } from "../../inhibitors/voted";
 import { JoshAPI } from "../../services/api/josh";
 import { InteractionOptions } from "../../services/util/interactionOptions";
@@ -27,24 +28,35 @@ export const api: ChatCommand = {
     );
 
     if (options.subCommandName === "link") {
-      const request = await JoshAPI.link(
-        interaction.guild!.id,
-        interaction.channel!.id,
-        interaction.user.id
-      );
+      const user = await JoshAPI.user(interaction.member!.user.id);
+
+      console.log(user);
+
+      const row = new MessageActionRow().addComponents([
+        new MessageButton()
+          .setCustomId("button_spotify")
+          .setLabel("Spotify")
+          .setStyle("SUCCESS"),
+        new MessageButton()
+          .setCustomId("button_apple-music")
+          .setLabel("Apple Music")
+          .setStyle("DANGER"),
+      ]);
 
       await interaction.reply({
-        content: `[Click here to link your Spotify account to tunes.ninja!](${request})`,
-        ephemeral: true,
-      });
-    } else if (options.subCommandName === "unlink") {
-      const request = await JoshAPI.unlink(interaction.user.id);
-
-      if (!request) throw new Error("Internal error, do `/support");
-      await interaction.reply({
-        content: `If you had an account, it will be deleted!`,
+        content: "Select a platform to link!",
+        components: [row],
         ephemeral: true,
       });
     }
+    // } else if (options.subCommandName === "unlink") {
+    //   const request = await JoshAPI.unlink(interaction.user.id);
+
+    //   if (!request) throw new Error("Internal error, do `/support");
+    //   await interaction.reply({
+    //     content: `If you had an account, it will be deleted!`,
+    //     ephemeral: true,
+    //   });
+    // }
   },
 };
