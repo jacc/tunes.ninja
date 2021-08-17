@@ -4,6 +4,7 @@ import { ping } from "./util/ping";
 import { config } from "./settings/config";
 import { stats } from "./util/stats";
 import { invite } from "./util/invite";
+import { support } from "./util/support";
 import { spotify } from "./util/spotify";
 import { song } from "./util/song";
 import { vote } from "./util/vote";
@@ -29,6 +30,7 @@ export const chatCommands: ChatCommand[] = [
   playlist,
   api,
   source,
+  support
 ];
 
 export const messageCommands: MessageCommand[] = [playlists, playOnSpotify];
