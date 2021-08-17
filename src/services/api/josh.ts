@@ -38,13 +38,13 @@ export class JoshAPI {
     return body.url;
   }
 
-  public static async user(user: string): Promise<string> {
+  public static async user(user: string): Promise<any> {
     const response = await fetch(
       `${
         isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
-      }/linked/user/${user}`,
+      }linked/services/user/${user}`,
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `${process.env.JOSH_AUTH}`,

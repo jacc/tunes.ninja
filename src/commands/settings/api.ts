@@ -29,22 +29,29 @@ export const api: ChatCommand = {
     );
 
     if (options.subCommandName === "link") {
-      // const user = await JoshAPI.user(interaction.member!.user.id);
+      const user = await JoshAPI.user(interaction.member!.user.id);
 
-      // console.log(user);
+      const spotifyButton = new MessageButton()
+        .setCustomId("button_spotify")
+        .setLabel("Spotify")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["spotify"]);
+      user.services.spotify
+        ? spotifyButton.setDisabled(true).setLabel("Spotify (linked)")
+        : spotifyButton.setDisabled(false);
+
+      const appleMusicButton = new MessageButton()
+        .setCustomId("button_apple-music")
+        .setLabel("Apple Music")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["apple_music"]);
+      user.services.appleMusic
+        ? appleMusicButton.setDisabled(true).setLabel("Apple Music (linked)")
+        : appleMusicButton.setDisabled(false);
 
       const row = new MessageActionRow().addComponents([
-        new MessageButton()
-          .setCustomId("button_spotify")
-          .setLabel("Spotify")
-          .setStyle("SECONDARY")
-          .setEmoji(PLATFORM_EMOJI["spotify"]),
-
-        new MessageButton()
-          .setCustomId("button_apple-music")
-          .setLabel("Apple Music")
-          .setStyle("SECONDARY")
-          .setEmoji(PLATFORM_EMOJI["apple_music"]),
+        spotifyButton,
+        appleMusicButton,
       ]);
 
       await interaction.reply({
