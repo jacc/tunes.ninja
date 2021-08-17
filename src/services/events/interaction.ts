@@ -163,19 +163,41 @@ export async function handleButtonInteraction(
 ): Promise<void> {
   await interaction.deferUpdate();
   dd.inc(`interactions.ButtonInteraction.run`);
-  const platform = interaction.customId.split("button_")[1];
-  const request = await JoshAPI.link(
-    interaction.guild!.id,
-    interaction.channel!.id,
-    interaction.user!.id,
-    platform
-  );
+  const platform = interaction.customId.split("_")[1];
+  const action = interaction.customId.split("_")[2];
 
-  await interaction.editReply({
-    components: [],
-    content: `[Click here to link your ${platform
-      .split("-")
-      .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
-      .join(" ")} account to tunes.ninja!](${request})`,
-  });
+  if (action === "link") {
+    const request = await JoshAPI.link(
+      interaction.guild!.id,
+      interaction.channel!.id,
+      interaction.user!.id,
+        platforms[platform]
+    );
+
+    await interaction.editReply({
+      components: [],
+      content: `[Click here to link your ${platform
+        .split("-")
+        .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+        .join(" ")} account to tunes.ninja!](${request})`,
+    });
+  } else if (action === "unlink") {
+    console.log(platforms[platform])
+    const request = await JoshAPI.unlink(interaction.user!.id, platforms[platform]);
+    console.log(request)
+    await interaction.editReply({
+      components: [],
+      content: request
+        ? `Unlinked your ${platform
+            .split("-")
+            .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+            .join(" ")} account!`
+        : "Couldn't unlink.",
+    });
+  }
+}
+
+export const platforms: Record<string, string> = {
+  "apple-music": "appleMusic",
+  "spotify": "spotify"
 }

@@ -32,7 +32,7 @@ export const api: ChatCommand = {
       const user = await JoshAPI.user(interaction.member!.user.id);
 
       const spotifyButton = new MessageButton()
-        .setCustomId("button_spotify")
+        .setCustomId("button_spotify_link")
         .setLabel("Spotify")
         .setStyle("SECONDARY")
         .setEmoji(PLATFORM_EMOJI["spotify"]);
@@ -41,7 +41,7 @@ export const api: ChatCommand = {
         : spotifyButton.setDisabled(false);
 
       const appleMusicButton = new MessageButton()
-        .setCustomId("button_apple-music")
+        .setCustomId("button_apple-music_link")
         .setLabel("Apple Music")
         .setStyle("SECONDARY")
         .setEmoji(PLATFORM_EMOJI["apple_music"]);
@@ -59,16 +59,38 @@ export const api: ChatCommand = {
         components: [row],
         ephemeral: true,
       });
+
+    } else if (options.subCommandName === "unlink") {
+      const user = await JoshAPI.user(interaction.member!.user.id);
+
+      const spotifyButton = new MessageButton()
+        .setCustomId("button_spotify_unlink")
+        .setLabel("Spotify")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["spotify"]);
+      user.services.spotify
+        ? spotifyButton.setDisabled(false)
+        : spotifyButton.setDisabled(true).setLabel("Spotify (unlinked)");
+
+      const appleMusicButton = new MessageButton()
+        .setCustomId("button_apple-music_unlink")
+        .setLabel("Apple Music")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["apple_music"]);
+      user.services.appleMusic
+        ? appleMusicButton.setDisabled(false)
+        : appleMusicButton.setDisabled(true).setLabel("Apple Music (unlinked)");
+
+      const row = new MessageActionRow().addComponents([
+        spotifyButton,
+        appleMusicButton,
+      ]);
+
+      await interaction.reply({
+        content: "Select a platform to unlink!",
+        components: [row],
+        ephemeral: true,
+      });
     }
-
-    // } else if (options.subCommandName === "unlink") {
-    //   const request = await JoshAPI.unlink(interaction.user.id);
-
-    //   if (!request) throw new Error("Internal error, do `/support");
-    //   await interaction.reply({
-    //     content: `If you had an account, it will be deleted!`,
-    //     ephemeral: true,
-    //   });
-    // }
   },
 };
