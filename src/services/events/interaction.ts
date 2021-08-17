@@ -171,8 +171,6 @@ export async function handleButtonInteraction(
     platform
   );
 
-  console.log(request);
-
   await interaction.editReply({
     components: [],
     content: `[Click here to link your ${platform
