@@ -1,5 +1,6 @@
 import { CommandInteraction, Message, User } from "discord.js";
 import fetch from "node-fetch";
+import { isDev } from "../../constants";
 import { JoshLink } from "../../types/josh";
 import { prisma } from "../prisma";
 
@@ -11,7 +12,9 @@ export class JoshAPI {
     platform: string
   ): Promise<string> {
     const response = await fetch(
-      `${process.env.JOSH_BASE}login/user/${platform}`,
+      `${
+        isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
+      }login/user/${platform}`,
       {
         method: "POST",
         headers: {
@@ -37,7 +40,9 @@ export class JoshAPI {
 
   public static async user(user: string): Promise<string> {
     const response = await fetch(
-      `${process.env.JOSH_BASE}/linked/user/${user}`,
+      `${
+        isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
+      }/linked/user/${user}`,
       {
         method: "POST",
         headers: {
