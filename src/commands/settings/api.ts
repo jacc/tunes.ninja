@@ -1,6 +1,7 @@
 import { MessageActionRow, MessageButton } from "discord.js";
 import { voted } from "../../inhibitors/voted";
 import { JoshAPI } from "../../services/api/josh";
+import { PLATFORM_EMOJI } from "../../services/reply-song";
 import { InteractionOptions } from "../../services/util/interactionOptions";
 import { ChatCommand } from "../../types/command";
 
@@ -28,19 +29,22 @@ export const api: ChatCommand = {
     );
 
     if (options.subCommandName === "link") {
-      const user = await JoshAPI.user(interaction.member!.user.id);
+      // const user = await JoshAPI.user(interaction.member!.user.id);
 
-      console.log(user);
+      // console.log(user);
 
       const row = new MessageActionRow().addComponents([
         new MessageButton()
           .setCustomId("button_spotify")
           .setLabel("Spotify")
-          .setStyle("SUCCESS"),
+          .setStyle("SECONDARY")
+          .setEmoji(PLATFORM_EMOJI["spotify"]),
+
         new MessageButton()
           .setCustomId("button_apple-music")
           .setLabel("Apple Music")
-          .setStyle("DANGER"),
+          .setStyle("SECONDARY")
+          .setEmoji(PLATFORM_EMOJI["apple_music"]),
       ]);
 
       await interaction.reply({
@@ -49,6 +53,7 @@ export const api: ChatCommand = {
         ephemeral: true,
       });
     }
+
     // } else if (options.subCommandName === "unlink") {
     //   const request = await JoshAPI.unlink(interaction.user.id);
 

@@ -172,4 +172,12 @@ export async function handleButtonInteraction(
   );
 
   console.log(request);
+
+  await interaction.editReply({
+    components: [],
+    content: `[Click here to link your ${platform
+      .split("-")
+      .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+      .join(" ")} account to tunes.ninja!](${request})`,
+  });
 }
