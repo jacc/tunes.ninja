@@ -33,7 +33,7 @@ export class JoshAPI {
         const body = await response.json();
         if (response.status !== 200) {
             if (!body.detail) throw new Error(body.reason);
-            if (body.detail) throw new Error(body.detail.reason);
+            if (body.detail) throw new Error(body.detail);
         }
         return body.url;
     }
@@ -197,9 +197,9 @@ export class JoshAPI {
         }
     }
 
-    public static async getPlaylists(user: string): Promise<any> {
+    public static async getPlaylists(user: string, platform: string): Promise<any> {
         const response = await fetch(
-            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}playlists/${user}?fresh=true`,
+            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/playlists/${user}?fresh=true`,
             {
                 method: "GET",
                 headers: {
@@ -210,8 +210,11 @@ export class JoshAPI {
         );
 
         const body = await response.json();
+
+        console.log(body)
+
         if (response.status !== 200) {
-            throw new Error(body.detail.reason);
+            throw new Error(body.detail);
         }
         return body;
     }
@@ -219,16 +222,22 @@ export class JoshAPI {
     public static async addPersonalPlaylist(
         user: string,
         playlist: string,
-        song: string
+        song: string,
+        platform: string
     ): Promise<any> {
         const response = await fetch(
-            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}user/${user}/playlist/${playlist}/add?song_id=${song}`,
+            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/playlist/add`,
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${process.env.JOSH_AUTH}`,
                 },
+                body: JSON.stringify({
+                    playlistID: playlist.toString(),
+                    discordUserID: user.toString(),
+                    trackID: song.toString()
+                })
             }
         );
 

@@ -11,7 +11,7 @@ import { fm } from "./util/fm";
 import { profile } from "./settings/profile";
 import { playlist } from "./settings/playlist";
 import { getSong } from "./context/get-song";
-import { playlists } from "./context/spotify-add";
+import { playlists } from "./context/add";
 import { api } from "./settings/api";
 import { playOnSpotify } from "./context/play";
 import { source } from "./util/source";

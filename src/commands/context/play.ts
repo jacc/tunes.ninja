@@ -35,7 +35,6 @@ export const playOnSpotify: MessageCommand = {
       "https://open.spotify.com/track/"
     )[1];
 
-    // TODO: add handling if errors
     await JoshAPI.play(interaction.user!.id, songId);
 
     const embed = new MessageEmbed()

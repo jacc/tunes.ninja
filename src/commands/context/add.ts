@@ -15,7 +15,7 @@ const linkSchema = z.string().refine((x) => {
 }, "");
 
 export const playlists: MessageCommand = {
-  name: "Add to Spotify Playlist",
+  name: "Add to Playlist",
   inhibitors: [voted],
   type: "MESSAGE",
   async run(interaction) {
@@ -32,28 +32,48 @@ export const playlists: MessageCommand = {
     }
 
     const song = await SongsApi.getLinks(url.data);
-    const playlists = await JoshAPI.getPlaylists(interaction.user.id);
 
-    const row = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
-        .setCustomId(`select_${interaction.user.id}`)
-        .setPlaceholder("Select a playlist from the list")
-        .addOptions(
-          playlists.playlists.map(
-            (p: { playlist_display_name: string; playlist_id: string }) => {
-              return {
-                label: p.playlist_display_name,
-                value: `_${p.playlist_id}_${
-                  song.links!.spotify!.split(
-                    "https://open.spotify.com/track/"
-                  )[1]
-                }`,
-                emoji: "<:spotify:847868739298131998>",
-              };
-            }
-          )
-        )
-    );
+    const user = await JoshAPI.user(interaction.user.id)
+
+    console.log(user)
+
+    // if (!user.services.appleMusic && !user.services.spotify) {
+    //   throw new Error("You don't have any music services linked! Do `/api link` to get started!")
+    // }
+
+    const rows = []
+
+    for (const platform in user.services) {
+      if (!user.services[platform]) {
+        const playlists = await JoshAPI.getPlaylists(interaction.user.id, platform);
+
+        console.log(playlists)
+
+        // const row = new MessageActionRow().addComponents(
+        //   new MessageSelectMenu()
+        //     .setCustomId(`select_${interaction.user.id}`)
+        //     .setPlaceholder("Select a playlist from the list")
+        //     .addOptions(
+        //       playlists.playlists.map(
+        //         (p: { playlist_display_name: string; playlist_id: string }) => {
+        //           return {
+        //             label: p.playlist_display_name,
+        //             value: `_${p.playlist_id}_${
+        //               song.links!.spotify!.split(
+        //                 "https://open.spotify.com/track/"
+        //               )[1]
+        //             }`,
+        //             emoji: "<:spotify:847868739298131998>",
+        //           };
+        //         }
+        //       )
+        //     )
+        // );
+        //
+        // rows.push(row)
+      }
+    }
+
 
     const embed = new MessageEmbed()
       .setAuthor(
@@ -68,7 +88,7 @@ export const playlists: MessageCommand = {
 
     await interaction.editReply({
       embeds: [embed],
-      components: [row],
+      // components: rows,
     });
   },
 };

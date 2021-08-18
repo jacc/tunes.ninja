@@ -141,11 +141,12 @@ export async function handleSelectInteraction(
   interaction: SelectMenuInteraction
 ): Promise<void> {
   await interaction.deferUpdate();
-  dd.inc(`interactions.SelectMenuInteraction.run`);
+  await dd.inc(`interactions.SelectMenuInteraction.run`);
   const userId = interaction.customId.split("select_")[1];
   const playlistId = interaction.values[0].split("_")[1];
   const songId = interaction.values[0].split("_")[2];
-  const request = await JoshAPI.addPersonalPlaylist(userId, playlistId, songId);
+  const platform = "apple-music"
+  const request = await JoshAPI.addPersonalPlaylist(userId, playlistId, songId, platform);
   if (request.status === true) {
     await interaction.editReply({
       embeds: [
@@ -166,12 +167,14 @@ export async function handleButtonInteraction(
   const platform = interaction.customId.split("_")[1];
   const action = interaction.customId.split("_")[2];
 
+  console.log(platforms[platform])
+
   if (action === "link") {
     const request = await JoshAPI.link(
       interaction.guild!.id,
       interaction.channel!.id,
       interaction.user!.id,
-        platforms[platform]
+        platform
     );
 
     await interaction.editReply({
@@ -181,6 +184,7 @@ export async function handleButtonInteraction(
         .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
         .join(" ")} account to tunes.ninja!](${request})`,
     });
+
   } else if (action === "unlink") {
     console.log(platforms[platform])
     const request = await JoshAPI.unlink(interaction.user!.id, platforms[platform]);
