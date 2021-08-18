@@ -12,7 +12,7 @@ import { JoshAPI } from "./api/josh";
 import { SongsApi } from "./api/song";
 import { incrementSearches, prisma } from "./prisma";
 
-const dd = new DataDog();
+const dd = new DataDog()
 
 export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
