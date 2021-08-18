@@ -31,6 +31,8 @@ export const api: ChatCommand = {
     if (options.subCommandName === "link") {
       const user = await JoshAPI.user(interaction.member!.user.id);
 
+      console.log(user)
+
       const spotifyButton = new MessageButton()
         .setCustomId("button_spotify_link")
         .setLabel("Spotify")

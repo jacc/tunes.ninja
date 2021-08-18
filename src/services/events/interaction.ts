@@ -167,8 +167,6 @@ export async function handleButtonInteraction(
   const platform = interaction.customId.split("_")[1];
   const action = interaction.customId.split("_")[2];
 
-  console.log(platforms[platform])
-
   if (action === "link") {
     const request = await JoshAPI.link(
       interaction.guild!.id,
@@ -203,5 +201,6 @@ export async function handleButtonInteraction(
 
 export const platforms: Record<string, string> = {
   "apple-music": "appleMusic",
-  "spotify": "spotify"
+  "spotify": "spotify",
+  "appleMusic": "apple-music",
 }

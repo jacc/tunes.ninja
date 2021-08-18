@@ -23,12 +23,12 @@ export class JoshAPI {
                 },
                 body: JSON.stringify({
                     platform: platform.toString(),
-                    discordChannelID: channel.toString(),
-                    discordServerID: server.toString(),
                     discordUserID: user.toString(),
                 }),
             }
         );
+
+        console.log(response)
 
         const body = await response.json();
         if (response.status !== 200) {
@@ -198,14 +198,15 @@ export class JoshAPI {
     }
 
     public static async getPlaylists(user: string, platform: string): Promise<any> {
+        console.log(platform)
         const response = await fetch(
-            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/playlists/${user}?fresh=true`,
+            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/users/playlists/${user}?fresh=true`,
             {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${process.env.JOSH_AUTH}`,
-                },
+                }
             }
         );
 
@@ -226,7 +227,7 @@ export class JoshAPI {
         platform: string
     ): Promise<any> {
         const response = await fetch(
-            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/playlist/add`,
+            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/playlist/add/song`,
             {
                 method: "POST",
                 headers: {
@@ -243,7 +244,7 @@ export class JoshAPI {
 
         const body = await response.json();
         if (response.status !== 200) {
-            throw new Error(body.detail.reason);
+            throw new Error(body.detail);
         }
         return body;
     }
