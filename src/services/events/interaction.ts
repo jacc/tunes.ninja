@@ -142,11 +142,13 @@ export async function handleSelectInteraction(
 ): Promise<void> {
   await interaction.deferUpdate();
   await dd.inc(`interactions.SelectMenuInteraction.run`);
-  const userId = interaction.customId.split("select_")[1];
+  const userId = interaction.customId.split("select_")[1].split("_")[0];
+  const platform = interaction.customId.split("select_")[1].split("_")[1];
   const playlistId = interaction.values[0].split("_")[1];
-  const songId = interaction.values[0].split("_")[2];
-  const platform = "apple-music"
-  const request = await JoshAPI.addPersonalPlaylist(userId, playlistId, songId, platform);
+  // console.log(interaction.values[0])
+  const songId = interaction.values[0].split("_")[2].split("&")[0]
+  console.log(userId, playlistId, songId, platform)
+  const request = await JoshAPI.addPersonalPlaylist(userId, playlistId, songId, platforms[platform]);
   if (request.status === true) {
     await interaction.editReply({
       embeds: [

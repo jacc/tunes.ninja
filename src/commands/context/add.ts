@@ -35,11 +35,7 @@ export const playlists: MessageCommand = {
 
     const song = await SongsApi.getLinks(url.data);
 
-    console.log(song)
-
     const user = await JoshAPI.user(interaction.user.id)
-
-    console.log(user)
 
     if (!user.services.appleMusic && !user.services.spotify) {
       throw new Error("You don't have any music services linked! Do `/api link` to get started!")
@@ -49,11 +45,8 @@ export const playlists: MessageCommand = {
 
     for (const platform in user.services) {
       if (user.services[platform]) {
-        console.log(platforms[platform])
         const playlists = await JoshAPI.getPlaylists(interaction.user.id, platforms[platform]
         );
-
-        console.log(platform)
 
         let songID: string;
 
@@ -62,13 +55,16 @@ export const playlists: MessageCommand = {
             songID = song.links!.spotify!.split("https://open.spotify.com/track/")[1]
             break
           case "appleMusic":
-            songID = song.links!.apple_music!.split("?")[0]
+            songID = song.links!.apple_music!.split("?i=")[1]
         }
 
         const row = new MessageActionRow().addComponents(
           new MessageSelectMenu()
-            .setCustomId(`select_${interaction.user.id}`)
-            .setPlaceholder("Select a playlist from the list")
+            .setCustomId(`select_${interaction.user.id}_${platform}`)
+            .setPlaceholder(`Select a ${platforms[platform]
+        .split("-")
+        .map((w) => w[0].toUpperCase() + w.substr(1).toLowerCase())
+        .join(" ")} playlist from the list`)
             .addOptions(
               playlists.playlists.map(
                 (p: { playlist_display_name: string; playlist_id: string }) => {
