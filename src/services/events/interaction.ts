@@ -94,7 +94,7 @@ export async function handleMessageInteraction(
   interaction: CommandInteraction
 ): Promise<void> {
     try {
-        dd.inc(`interactions.CommandInteraction.run`);
+        await dd.inc(`interactions.CommandInteraction.run`);
         const command = chatCommandsMap.get(interaction.commandName);
 
         if (!command) return;
@@ -154,7 +154,7 @@ export async function handleSelectInteraction(
     const playlistId = interaction.values[0].split("_")[1];
     // console.log(interaction.values[0])
     const songId = interaction.values[0].split("_")[2].split("&")[0]
-    const request = await JoshAPI.addPersonalPlaylist(userId, playlistId, songId, platforms[platform]);
+    const request = await JoshAPI.add(userId, playlistId, songId, platforms[platform]);
     if (request.status === true) {
       await interaction.editReply({
         embeds: [

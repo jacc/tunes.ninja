@@ -82,9 +82,10 @@ export async function returnLinks(
     },
   });
 
-  if (channel) {
-    await JoshAPI.add(message, link);
-  }
+  // if (channel) {
+  //   await JoshAPI.add(message, link);
+  // }
+
   await incrementSearches(author as User);
   await dd.inc("interactions.song");
 }

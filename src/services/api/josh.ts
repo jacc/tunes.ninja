@@ -108,10 +108,11 @@ export class JoshAPI {
     public static async playlist(
         server: string,
         channel: string,
-        user: string
+        user: string,
+        platform: string
     ): Promise<JoshLink> {
         const response = await fetch(
-            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}link/playlist/creation`,
+            `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/link/playlist/creation`,
             {
                 method: "POST",
                 headers: {
@@ -119,7 +120,7 @@ export class JoshAPI {
                     Authorization: `${process.env.JOSH_AUTH}`,
                 },
                 body: JSON.stringify({
-                    platform: "spotify",
+                    playlistId: platform.toString(),
                     discordChannelID: channel.toString(),
                     discordServerID: server.toString(),
                     discordUserID: user.toString(),
@@ -161,41 +162,41 @@ export class JoshAPI {
         return body;
     }
 
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    public static async add(
-        message: Message | CommandInteraction,
-        url: string
-    ): Promise<any> {
-        let author;
-        if (message instanceof Message) {
-            author = message.author;
-        }
-        if (message instanceof CommandInteraction) {
-            if (!message.deferred) {
-                await message.deferReply();
-            }
-            author = message.member;
-        }
-
-        await fetch(`${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}add/new/song/premium`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `${process.env.JOSH_AUTH}`,
-            },
-            body: JSON.stringify({
-                platform: "spotify",
-                discordChannelID: message.channel!.id.toString(),
-                discordServerID: message.guild!.id.toString(),
-                discordUserID: (author as User).id.toString(),
-                url,
-            }),
-        });
-
-        if (message instanceof Message) {
-            await message.react("🎶");
-        }
-    }
+    // /* eslint-disable  @typescript-eslint/no-explicit-any */
+    // public static async add(
+    //     message: Message | CommandInteraction,
+    //     url: string
+    // ): Promise<any> {
+    //     let author;
+    //     if (message instanceof Message) {
+    //         author = message.author;
+    //     }
+    //     if (message instanceof CommandInteraction) {
+    //         if (!message.deferred) {
+    //             await message.deferReply();
+    //         }
+    //         author = message.member;
+    //     }
+    //
+    //     await fetch(`${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}add/new/song/premium`, {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `${process.env.JOSH_AUTH}`,
+    //         },
+    //         body: JSON.stringify({
+    //             platform: "spotify",
+    //             discordChannelID: message.channel!.id.toString(),
+    //             discordServerID: message.guild!.id.toString(),
+    //             discordUserID: (author as User).id.toString(),
+    //             url,
+    //         }),
+    //     });
+    //
+    //     if (message instanceof Message) {
+    //         await message.react("🎶");
+    //     }
+    // }
 
     public static async getPlaylists(user: string, platform: string): Promise<any> {
         console.log(platform)
@@ -220,12 +221,24 @@ export class JoshAPI {
         return body;
     }
 
-    public static async addPersonalPlaylist(
+    public static async add(
         user: string,
         playlist: string,
         song: string,
         platform: string
     ): Promise<any> {
+
+            // let author;
+            // if (message instanceof Message) {
+            //     author = message.author;
+            // }
+            // if (message instanceof CommandInteraction) {
+            //     if (!message.deferred) {
+            //         await message.deferReply();
+            //     }
+            //     author = message.member;
+            // }
+
         const response = await fetch(
             `${isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE}${platform}/playlist/add/song`,
             {
@@ -247,5 +260,9 @@ export class JoshAPI {
             throw new Error(body.detail);
         }
         return body;
+    }
+
+    public static async sync(channel: string) {
+
     }
 }
