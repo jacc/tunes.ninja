@@ -30,10 +30,11 @@ export class JoshAPI {
             }
         );
 
+        console.log(response)
+
         const body = await response.json();
         if (response.status !== 200) {
-            if (!body.detail) throw new Error(body.reason);
-            if (body.detail) throw new Error(body.detail);
+            throw new Error(body.detail.reason);
         }
         return body.url;
     }
@@ -54,8 +55,7 @@ export class JoshAPI {
 
         const body = await response.json();
         if (response.status !== 200) {
-            if (!body.detail) throw new Error(body.reason);
-            if (body.detail) throw new Error(body.detail.reason);
+            throw new Error(body.detail.reason);
         }
         return body;
     }
@@ -77,8 +77,7 @@ export class JoshAPI {
 
         if (response.status !== 200) {
             console.log(body);
-            if (!body.detail) throw new Error(body.reason);
-            if (body.detail) throw new Error(body.detail);
+            throw new Error(body.detail.reason);
         }
         return true;
     }
@@ -214,7 +213,7 @@ export class JoshAPI {
         console.log(body)
 
         if (response.status !== 200) {
-            throw new Error(body.detail);
+            throw new Error(body.detail.reason);
         }
         return body;
     }
