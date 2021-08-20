@@ -192,7 +192,7 @@ export class JoshAPI {
     song: string
   ): Promise<any> {
     const response = await fetch(
-      `${process.env.JOSH_BASE}user/${user}/playlist/${playlist}/add?song_id=${song}`,
+      `${process.env.JOSH_BASE}user/${user}/playlist/${playlist}/add/spotify?song_id=${song}`,
       {
         method: "POST",
         headers: {
