@@ -24,8 +24,11 @@ import { scheduleJob } from "node-schedule";
 import { handleInteraction } from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
 import { VotesServer } from "./services/util/server";
-import { DataDog } from "./services/api/datadog";
 import { Topgg } from "./services/api/topgg";
+import {DataDog} from "./services/api/datadog";
+import * as Sentry from "@sentry/node";
+
+
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -47,7 +50,13 @@ const client = new Client({
 });
 
 new VotesServer(client).start();
-const dd = new DataDog();
+
+Sentry.init({
+  dsn: process.env.SENTRY,
+  tracesSampleRate: 1.0,
+});
+
+const dd = new DataDog()
 
 client.on("ready", async () => {
   signale.info("Environment:", isDev ? "dev" : "prod");
@@ -154,7 +163,6 @@ client.on("messageCreate", async (message) => {
     });
   }
 });
-
 client.on("interactionCreate", handleInteraction);
 client.on("guildCreate", guildCreate);
 client.on("guildDelete", guildDelete);
@@ -191,3 +199,9 @@ prisma.$connect().then(async () => {
   await client.login(process.env.DISCORD_TOKEN);
   signale.info("Connected to Discord");
 });
+
+
+process
+    .on('uncaughtException', async err => {
+      Sentry.captureException(err)
+    });
