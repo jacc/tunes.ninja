@@ -169,7 +169,7 @@ export class JoshAPI {
 
   public static async getPlaylists(user: string): Promise<any> {
     const response = await fetch(
-      `${process.env.JOSH_BASE}playlists/${user}?fresh=true`,
+      `${process.env.JOSH_BASE}spotify/playlists/${user}?fresh=true`,
       {
         method: "GET",
         headers: {
