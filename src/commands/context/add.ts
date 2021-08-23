@@ -61,7 +61,7 @@ export const playlists: MessageCommand = {
             )[1];
             break;
           case "appleMusic":
-            songID = song.links!.apple_music!.split("?i=")[1];
+            songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
         }
 
         const row = new MessageActionRow().addComponents(

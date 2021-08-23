@@ -90,8 +90,9 @@ export async function returnLinks(
           "https://open.spotify.com/track/"
         )[1];
         break;
-      case "appleMusic":
-        songID = song.links!.apple_music!.split("?i=")[1];
+      case "apple-music":
+        console.log("bruh");
+        songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
         break;
       default:
         throw new Error(
@@ -99,11 +100,11 @@ export async function returnLinks(
         );
     }
 
-    await JoshAPI.addToPlaylist(
-      message,
-      channel.platform,
+    await JoshAPI.addSongToPlaylist(
+      (author as User).id,
       channel.playlistID,
-      songID
+      songID,
+      channel.platform
     );
   }
 

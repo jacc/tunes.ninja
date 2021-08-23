@@ -175,41 +175,6 @@ export class JoshAPI {
     return body;
   }
 
-  public static async addToPlaylist(
-    message: Message | CommandInteraction,
-    platform: string,
-    playlistID: string,
-    trackID: string
-  ): Promise<any> {
-    let author;
-    if (message instanceof Message) {
-      author = message.author;
-    } else if (message instanceof CommandInteraction) {
-      if (!message.deferred) {
-        await message.deferReply();
-      }
-      author = message.member;
-    }
-
-    const response = await fetch(
-      `${
-        isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
-      }/${platform}/playlist/add/song`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${process.env.JOSH_AUTH}`,
-        },
-        body: JSON.stringify({
-          discordUserID: (author as User).id.toString(),
-          playlistID,
-          trackID,
-        }),
-      }
-    );
-  }
-
   public static async getUserPlaylists(
     user: string,
     platform: string
@@ -241,6 +206,7 @@ export class JoshAPI {
     song: string,
     platform: string
   ): Promise<any> {
+    console.log(user, playlist, song, platform);
     const response = await fetch(
       `${
         isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
