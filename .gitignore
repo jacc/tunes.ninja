@@ -2,3 +2,4 @@
 .env.prod
 node_modules/
 .idea/
+yarn-error.log
