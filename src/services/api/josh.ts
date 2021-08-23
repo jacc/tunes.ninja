@@ -44,8 +44,6 @@ export class JoshAPI {
       }
     );
 
-    console.log(response);
-
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
@@ -216,7 +214,6 @@ export class JoshAPI {
     user: string,
     platform: string
   ): Promise<any> {
-    console.log(platform);
     const response = await fetch(
       `${
         isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
@@ -231,8 +228,6 @@ export class JoshAPI {
     );
 
     const body = await response.json();
-
-    console.log(body);
 
     if (response.status !== 200) {
       throw new Error(body.detail.reason);
@@ -297,10 +292,36 @@ export class JoshAPI {
       }
     );
 
-    console.log(response);
     const body = await response.json();
     if (response.status !== 200) {
       throw new Error(body.detail);
+    }
+    return body;
+  }
+
+  public static async unsyncPlaylist(
+    channel: string,
+    platform: string
+  ): Promise<any> {
+    const response = await fetch(
+      `${
+        isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
+      }${platform}/unlink/playlist`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${process.env.JOSH_AUTH}`,
+        },
+        body: JSON.stringify({
+          discordChannelID: channel.toString(),
+        }),
+      }
+    );
+
+    const body = await response.json();
+    if (response.status !== 200) {
+      throw new Error("No playlist is synced with this channel.");
     }
     return body;
   }

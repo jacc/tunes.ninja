@@ -62,6 +62,9 @@ export const playlist: ChatCommand = {
     );
 
     if (options.subCommandName === "sync") {
+      const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id);
+
+      console.log(linked);
       const member = interaction.member as GuildMember;
 
       const canManageServer = member.permissions.has(
@@ -72,99 +75,16 @@ export const playlist: ChatCommand = {
         throw new Error("You do not have permission to use this command.");
       }
 
-      const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id);
+      const existing = await prisma.joshChannel.findUnique({
+        where: {
+          id: interaction.channel!.id,
+        },
+      });
 
-      const user = await JoshAPI.getUser(interaction.user.id);
-
-      let playlist: any;
-      let platform: string;
-
-      if (!user.services.spotify && !user.services.appleMusic) {
-        throw new Error("No services are linked! Do `/api link` to link them."); // TODO: standardize these errors
-      }
-
-      // TODO: this needs to be written to be way cleaner
-      if (user.services.spotify && !user.services.appleMusic) {
-        playlist = await JoshAPI.createPlaylist(interaction.user, "spotify");
-        platform = "spotify";
-      } else if (user.services.appleMusic && !user.services.spotify) {
-        playlist = await JoshAPI.createPlaylist(
-          interaction.user,
-          "apple-music"
-        );
-        platform = "apple-music";
-      } else if (user.services.appleMusic && user.services.spotify) {
-        platform = "need to handle";
-
-        const spotifyButton = new MessageButton()
-          .setCustomId("button_spotify_playlistSelect")
-          .setLabel("Spotify")
-          .setStyle("SECONDARY")
-          .setEmoji(PLATFORM_EMOJI["spotify"]);
-
-        const appleMusicButton = new MessageButton()
-          .setCustomId("button_apple-music_playlistSelect")
-          .setLabel("Apple Music")
-          .setStyle("SECONDARY")
-          .setEmoji(PLATFORM_EMOJI["apple_music"]);
-
-        const row = new MessageActionRow().addComponents([
-          spotifyButton,
-          appleMusicButton,
-        ]);
-
-        const msg = await interaction.editReply({
-          content:
-            "You have multiple platforms linked - which would you like to create the playlist on?",
-          components: [row],
-        });
-
-        const filter = (i: any) => {
-          return i.user.id === interaction.user.id;
-        };
-
-        await (msg as Message)
-          .awaitMessageComponent({
-            filter,
-            componentType: "BUTTON",
-            time: 10000,
-          })
-          .then(async (interaction) => {
-            playlist = await JoshAPI.createPlaylist(
-              interaction.user,
-              interaction.customId.split("_")[1]
-            );
-            platform = interaction.customId.split("_")[1];
-            await interaction.deferUpdate();
-          })
-          .catch(async () => {
-            await interaction.deleteReply();
-          });
-      }
-
-      if (!playlist)
-        throw new Error("Internal error, please report this using `/support`.");
-
-      if (playlist.status) {
-        await prisma.joshChannel.create({
-          data: {
-            id: interaction.channel!.id,
-            platform: platform!, // TODO: remove this !
-            playlistID: playlist.detail.playlistID,
-          },
-        });
-
-        await JoshAPI.syncPlaylist(
-          interaction.guild!.id,
-          interaction.channel!.id,
-          interaction.user!.id,
-          platform!, // TODO: remove this !
-          playlist.detail.playlistID
-        );
-
+      if (existing) {
         const embed = new StandardEmbed(interaction.user as User)
           .setDescription(
-            `All links in this channel will now be added to your shared playlist! Open the playlist by clicking the button below.`
+            `This channel already has a synced playlist! Click the button below to open it!`
           )
           .setColor(Constants.Colors.GREEN);
 
@@ -172,43 +92,172 @@ export const playlist: ChatCommand = {
         row.addComponents(
           new MessageButton()
             .setStyle("LINK")
+            .setStyle("LINK")
             .setURL(
               `${
-                platform! === "apple-music"
-                  ? `https://music.apple.com/playlist/${playlist.detail.playlistID}`
-                  : `https://open.spotify.com/playlist/${playlist.detail.playlistID}`
+                existing.platform === "apple-music"
+                  ? `https://music.apple.com/playlist/${existing.playlistID}`
+                  : `https://open.spotify.com/playlist/${existing.playlistID}`
               }`
             )
             .setLabel("Open Playlist")
-            .setEmoji(PLATFORM_EMOJI[platform!]) // TODO: remove this !
+            .setEmoji(PLATFORM_EMOJI[existing.platform]) // TODO: remove this !
         );
-        await interaction.editReply({
-          embeds: [embed],
-          components: [row],
-          content: null,
-        });
+        await interaction.editReply({ embeds: [embed], components: [row] });
+      } else {
+        const user = await JoshAPI.getUser(interaction.user.id);
+
+        let playlist: any;
+        let platform: string;
+
+        if (!user.services.spotify && !user.services.appleMusic) {
+          throw new Error(
+            "No services are linked! Do `/api link` to link them."
+          ); // TODO: standardize these errors
+        }
+
+        // TODO: this needs to be written to be way cleaner
+        if (user.services.spotify && !user.services.appleMusic) {
+          playlist = await JoshAPI.createPlaylist(interaction.user, "spotify");
+          platform = "spotify";
+        } else if (user.services.appleMusic && !user.services.spotify) {
+          playlist = await JoshAPI.createPlaylist(
+            interaction.user,
+            "apple-music"
+          );
+          platform = "apple-music";
+        } else if (user.services.appleMusic && user.services.spotify) {
+          const spotifyButton = new MessageButton()
+            .setCustomId("button_spotify_playlistSelect")
+            .setLabel("Spotify")
+            .setStyle("SECONDARY")
+            .setEmoji(PLATFORM_EMOJI["spotify"]);
+
+          const appleMusicButton = new MessageButton()
+            .setCustomId("button_apple-music_playlistSelect")
+            .setLabel("Apple Music")
+            .setStyle("SECONDARY")
+            .setEmoji(PLATFORM_EMOJI["apple_music"]);
+
+          const row = new MessageActionRow().addComponents([
+            spotifyButton,
+            appleMusicButton,
+          ]);
+
+          const msg = await interaction.editReply({
+            content:
+              "You have multiple platforms linked - which would you like to create the playlist on?",
+            components: [row],
+          });
+
+          const filter = (i: any) => {
+            return i.user.id === interaction.user.id;
+          };
+
+          await (msg as Message)
+            .awaitMessageComponent({
+              filter,
+              componentType: "BUTTON",
+              time: 10000,
+            })
+            .then(async (interaction) => {
+              playlist = await JoshAPI.createPlaylist(
+                interaction.user,
+                interaction.customId.split("_")[1]
+              );
+              platform = interaction.customId.split("_")[1];
+              await interaction.deferUpdate();
+            })
+            .catch(async () => {
+              await interaction.deleteReply();
+            });
+        }
+
+        if (!playlist)
+          throw new Error(
+            "Internal error, please report this using `/support`."
+          );
+
+        if (playlist.status) {
+          await prisma.joshChannel.create({
+            data: {
+              id: interaction.channel!.id,
+              platform: platform!, // TODO: remove this !
+              playlistID: playlist.detail.playlistID,
+            },
+          });
+
+          await JoshAPI.syncPlaylist(
+            interaction.guild!.id,
+            interaction.channel!.id,
+            interaction.user!.id,
+            platform!, // TODO: remove this !
+            playlist.detail.playlistID
+          );
+
+          const embed = new StandardEmbed(interaction.user as User)
+            .setDescription(
+              `All links in this channel will now be added to your shared playlist! Open the playlist by clicking the button below.`
+            )
+            .setColor(Constants.Colors.GREEN);
+
+          const row = new MessageActionRow();
+          row.addComponents(
+            new MessageButton()
+              .setStyle("LINK")
+              .setURL(
+                `${
+                  platform! === "apple-music"
+                    ? `https://music.apple.com/playlist/${playlist.detail.playlistID}`
+                    : `https://open.spotify.com/playlist/${playlist.detail.playlistID}`
+                }`
+              )
+              .setLabel("Open Playlist")
+              .setEmoji(PLATFORM_EMOJI[platform!]) // TODO: remove this !
+          );
+          await interaction.editReply({
+            embeds: [embed],
+            components: [row],
+            content: null,
+          });
+        }
       }
     } else if (options.subCommandName === "unsync") {
       // TODO: probably need to write all of this innit
-      // const member = interaction.member as GuildMember;
-      //
-      // const canManageServer = member.permissions.has(
-      //   Permissions.FLAGS.MANAGE_GUILD
-      // );
-      //
-      // if (!canManageServer) {
-      //   throw new Error("You do not have permission to use this command.");
-      // }
-      //
-      // const request = await JoshAPI.delete(interaction.channel!.id);
-      //
-      // if (request.status) {
-      //   await interaction.reply("👌");
-      // } else if (request.detail.code === "SP001") {
-      //   await interaction.reply(
-      //     "No synced playlist was found for this channel!"
-      //   );
-      // }
+      const member = interaction.member as GuildMember;
+
+      const canManageServer = member.permissions.has(
+        Permissions.FLAGS.MANAGE_GUILD
+      );
+
+      if (!canManageServer) {
+        throw new Error("You do not have permission to use this command.");
+      }
+
+      const existing = await prisma.joshChannel.findUnique({
+        where: {
+          id: interaction.channel!.id,
+        },
+      });
+
+      if (!existing) {
+        throw new Error(
+          "No synced playlist found! Do `/playlist sync` to start."
+        );
+      }
+
+      const response = await JoshAPI.unsyncPlaylist(
+        interaction.channel!.id,
+        existing.platform
+      );
+      if (response.status) {
+        await interaction.editReply("Your playlist has been unlinked!");
+      }
+      await prisma.joshChannel.delete({
+        where: {
+          id: interaction.channel!.id,
+        },
+      });
     }
   },
 };
