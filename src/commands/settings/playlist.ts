@@ -2,6 +2,7 @@ import {
   CommandInteraction,
   Constants,
   GuildMember,
+  Message,
   MessageActionRow,
   MessageButton,
   MessageSelectMenu,
@@ -73,17 +74,20 @@ export const playlist: ChatCommand = {
 
       const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id);
 
-      console.log(linked);
-
       const user = await JoshAPI.getUser(interaction.user.id);
 
       let playlist: any;
       let platform: string;
 
-      if (user.services.spotify) {
+      if (!user.services.spotify && !user.services.appleMusic) {
+        throw new Error("No services are linked! Do `/api link` to link them."); // TODO: standardize these errors
+      }
+
+      // TODO: this needs to be written to be way cleaner
+      if (user.services.spotify && !user.services.appleMusic) {
         playlist = await JoshAPI.createPlaylist(interaction.user, "spotify");
         platform = "spotify";
-      } else if (user.services.appleMusic) {
+      } else if (user.services.appleMusic && !user.services.spotify) {
         playlist = await JoshAPI.createPlaylist(
           interaction.user,
           "apple-music"
@@ -91,7 +95,51 @@ export const playlist: ChatCommand = {
         platform = "apple-music";
       } else if (user.services.appleMusic && user.services.spotify) {
         platform = "need to handle";
-        throw new Error("need to handle multiple platforms");
+
+        const spotifyButton = new MessageButton()
+          .setCustomId("button_spotify_playlistSelect")
+          .setLabel("Spotify")
+          .setStyle("SECONDARY")
+          .setEmoji(PLATFORM_EMOJI["spotify"]);
+
+        const appleMusicButton = new MessageButton()
+          .setCustomId("button_apple-music_playlistSelect")
+          .setLabel("Apple Music")
+          .setStyle("SECONDARY")
+          .setEmoji(PLATFORM_EMOJI["apple_music"]);
+
+        const row = new MessageActionRow().addComponents([
+          spotifyButton,
+          appleMusicButton,
+        ]);
+
+        const msg = await interaction.editReply({
+          content:
+            "You have multiple platforms linked - which would you like to create the playlist on?",
+          components: [row],
+        });
+
+        const filter = (i: any) => {
+          return i.user.id === interaction.user.id;
+        };
+
+        await (msg as Message)
+          .awaitMessageComponent({
+            filter,
+            componentType: "BUTTON",
+            time: 10000,
+          })
+          .then(async (interaction) => {
+            playlist = await JoshAPI.createPlaylist(
+              interaction.user,
+              interaction.customId.split("_")[1]
+            );
+            platform = interaction.customId.split("_")[1];
+            await interaction.deferUpdate();
+          })
+          .catch(async () => {
+            await interaction.deleteReply();
+          });
       }
 
       if (!playlist)
@@ -134,7 +182,11 @@ export const playlist: ChatCommand = {
             .setLabel("Open Playlist")
             .setEmoji(PLATFORM_EMOJI[platform!]) // TODO: remove this !
         );
-        await interaction.editReply({ embeds: [embed], components: [row] });
+        await interaction.editReply({
+          embeds: [embed],
+          components: [row],
+          content: null,
+        });
       }
     } else if (options.subCommandName === "unsync") {
       // TODO: probably need to write all of this innit

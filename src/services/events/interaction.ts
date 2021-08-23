@@ -177,6 +177,7 @@ export async function handleSelectInteraction(
 export async function handleButtonInteraction(
   interaction: ButtonInteraction
 ): Promise<void> {
+  if (interaction.customId.includes("playlistSelect")) return;
   try {
     await interaction.deferUpdate();
     dd.inc(`interactions.ButtonInteraction.run`);
