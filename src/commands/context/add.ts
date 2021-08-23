@@ -64,6 +64,8 @@ export const playlists: MessageCommand = {
             songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
         }
 
+        console.log(playlists.playlists);
+
         const row = new MessageActionRow().addComponents(
           new MessageSelectMenu()
             .setCustomId(`select_${interaction.user.id}_${platform}`)

@@ -1,6 +1,8 @@
+import { APIInteractionGuildMember } from "discord-api-types";
 import {
   CommandInteraction,
   ContextMenuInteraction,
+  GuildMember,
   Message,
   MessageActionRow,
   MessageButton,
@@ -18,7 +20,7 @@ export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
   link: string
 ): Promise<void> {
-  let author;
+  let author: User | GuildMember | APIInteractionGuildMember | null;
 
   if ("author" in message) {
     author = message.author;
@@ -76,36 +78,40 @@ export async function returnLinks(
     await message.editReply({ embeds: [embed], components: rows });
   }
 
-  const channel = await prisma.joshChannel.findUnique({
+  const channels = await prisma.joshChannel.findMany({
     where: {
       id: message.channel!.id,
     },
   });
 
-  if (channel) {
-    let songID: string;
-    switch (channel.platform) {
-      case "spotify":
-        songID = song.links!.spotify!.split(
-          "https://open.spotify.com/track/"
-        )[1];
-        break;
-      case "apple-music":
-        console.log("bruh");
-        songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
-        break;
-      default:
-        throw new Error(
-          "this shouldn't happen lol, do `/support` for help and please report this :)"
-        );
-    }
+  console.log(channels);
 
-    await JoshAPI.addSongToPlaylist(
-      (author as User).id,
-      channel.playlistID,
-      songID,
-      channel.platform
-    );
+  if (channels) {
+    channels.map(async (channel) => {
+      let songID: string;
+      switch (channel.platform) {
+        case "spotify":
+          songID = song.links!.spotify!.split(
+            "https://open.spotify.com/track/"
+          )[1];
+          break;
+        case "apple-music":
+          console.log("bruh");
+          songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
+          break;
+        default:
+          throw new Error(
+            "this shouldn't happen lol, do `/support` for help and please report this :)"
+          );
+      }
+
+      await JoshAPI.addSongToPlaylist(
+        (author as User).id,
+        channel.playlistID,
+        songID,
+        channel.platform
+      );
+    });
   }
 
   await incrementSearches(author as User);

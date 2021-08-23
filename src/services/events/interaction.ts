@@ -145,6 +145,7 @@ export async function handleMessageInteraction(
 export async function handleSelectInteraction(
   interaction: SelectMenuInteraction
 ): Promise<void> {
+  if (interaction.customId.includes("unsync")) return;
   try {
     await interaction.deferUpdate();
     await dd.inc(`interactions.SelectMenuInteraction.run`);

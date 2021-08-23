@@ -27,7 +27,7 @@ model User {
 }
 
 model JoshChannel {
-  id      String  @id
+  id      String
   platform String
-  playlistID String
+  playlistID String @id
 }
