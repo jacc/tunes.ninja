@@ -29,9 +29,9 @@ export const api: ChatCommand = {
     );
 
     if (options.subCommandName === "link") {
-      const user = await JoshAPI.user(interaction.member!.user.id);
+      const user = await JoshAPI.getUser(interaction.member!.user.id);
 
-      console.log(user)
+      console.log(user);
 
       const spotifyButton = new MessageButton()
         .setCustomId("button_spotify_link")
@@ -61,9 +61,8 @@ export const api: ChatCommand = {
         components: [row],
         ephemeral: true,
       });
-
     } else if (options.subCommandName === "unlink") {
-      const user = await JoshAPI.user(interaction.member!.user.id);
+      const user = await JoshAPI.getUser(interaction.member!.user.id);
 
       const spotifyButton = new MessageButton()
         .setCustomId("button_spotify_unlink")

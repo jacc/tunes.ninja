@@ -12,7 +12,7 @@ import { JoshAPI } from "./api/josh";
 import { SongsApi } from "./api/song";
 import { incrementSearches, prisma } from "./prisma";
 
-const dd = new DataDog()
+const dd = new DataDog();
 
 export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
@@ -82,9 +82,30 @@ export async function returnLinks(
     },
   });
 
-  // if (channel) {
-  //   await JoshAPI.add(message, link);
-  // }
+  if (channel) {
+    let songID: string;
+    switch (channel.platform) {
+      case "spotify":
+        songID = song.links!.spotify!.split(
+          "https://open.spotify.com/track/"
+        )[1];
+        break;
+      case "appleMusic":
+        songID = song.links!.apple_music!.split("?i=")[1];
+        break;
+      default:
+        throw new Error(
+          "this shouldn't happen lol, do `/support` for help and please report this :)"
+        );
+    }
+
+    await JoshAPI.addToPlaylist(
+      message,
+      channel.platform,
+      channel.playlistID,
+      songID
+    );
+  }
 
   await incrementSearches(author as User);
   await dd.inc("interactions.song");
@@ -101,6 +122,7 @@ function chunk<T>(array: T[], size: number): T[][] {
 
 export const PLATFORM_EMOJI: Record<string, string> = {
   apple_music: "<:apple_music:847868738870968380>",
+  "apple-music": "<:apple_music:847868738870968380>",
   appleMusic: "<:apple_music:847868738870968380>",
   soundcloud: "<:soundcloud:847868739257106453>",
   spotify: "<:spotify:847868739298131998>",
