@@ -130,7 +130,7 @@ export class JoshAPI {
     const response = await fetch(
       `${
         isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
-      }linked/playlists/channels/${channel}`,
+      }linked/playlists/channels/${channel}?getPlaylistName=true`,
       {
         method: "GET",
         headers: {

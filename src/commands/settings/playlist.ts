@@ -217,11 +217,11 @@ export const playlist: ChatCommand = {
       for (const service in synced.playlists) {
         synced.playlists[service].map(
           (p: {
-            internalID: string;
+            playlistTitle: string;
             playlistLinkedPlatformUniqueID: string;
           }) => {
             return menu.addOptions({
-              label: "Placeholder",
+              label: `${p.playlistTitle}`,
               value: `${service}_${p.playlistLinkedPlatformUniqueID}`,
               description: `ID: ${p.playlistLinkedPlatformUniqueID}`,
               emoji: PLATFORM_EMOJI[service],
@@ -269,7 +269,7 @@ export const playlist: ChatCommand = {
             },
           });
         })
-        .catch(async () => {
+        .catch(async (e) => {
           await interaction.deleteReply();
         });
     }
