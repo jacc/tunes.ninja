@@ -25,10 +25,8 @@ import { handleInteraction } from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
 import { VotesServer } from "./services/util/server";
 import { Topgg } from "./services/api/topgg";
-import {DataDog} from "./services/api/datadog";
+import { DataDog } from "./services/api/datadog";
 import * as Sentry from "@sentry/node";
-
-
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -56,7 +54,7 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-const dd = new DataDog()
+const dd = new DataDog();
 
 client.on("ready", async () => {
   signale.info("Environment:", isDev ? "dev" : "prod");
@@ -126,7 +124,8 @@ client.on("messageCreate", async (message) => {
     matches.map(async (link) => {
       try {
         if (
-          link.includes("spotify.com/track") ||
+          (link.includes("spotify.com/track") &&
+            permer.test(guildSettings!.reply_to, "replySpotify")) ||
           (link.includes("spotify.com/album") &&
             permer.test(guildSettings!.reply_to, "replySpotify"))
         ) {
@@ -200,8 +199,6 @@ prisma.$connect().then(async () => {
   signale.info("Connected to Discord");
 });
 
-
-process
-    .on('uncaughtException', async err => {
-      Sentry.captureException(err)
-    });
+process.on("uncaughtException", async (err) => {
+  Sentry.captureException(err);
+});

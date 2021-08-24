@@ -146,7 +146,6 @@ export class JoshAPI {
     return body;
   }
 
-  // TODO: redo creation playlist API route
   public static async createPlaylist(
     user: User,
     platform: string

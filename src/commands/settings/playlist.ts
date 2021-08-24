@@ -75,37 +75,13 @@ export const playlist: ChatCommand = {
         throw new Error("You do not have permission to use this command.");
       }
 
-      // if (existing) {
-      //   const embed = new StandardEmbed(interaction.user as User)
-      //     .setDescription(
-      //       `This channel already has a synced playlist! Click the button below to open it!`
-      //     )
-      //     .setColor(Constants.Colors.GREEN);
-      //
-      //   const row = new MessageActionRow();
-      //   row.addComponents(
-      //     new MessageButton()
-      //       .setStyle("LINK")
-      //       .setStyle("LINK")
-      //       .setURL(
-      //         `${
-      //           existing.platform === "apple-music"
-      //             ? `https://music.apple.com/playlist/${existing.playlistID}`
-      //             : `https://open.spotify.com/playlist/${existing.playlistID}`
-      //         }`
-      //       )
-      //       .setLabel("Open Playlist")
-      //       .setEmoji(PLATFORM_EMOJI[existing.platform]) // TODO: remove this !
-      //   );
-      //   await interaction.editReply({ embeds: [embed], components: [row] });
-      // } else {
       const user = await JoshAPI.getUser(interaction.user.id);
 
       let playlist: any;
       let platform: string;
 
       if (!user.services.spotify && !user.services.appleMusic) {
-        throw new Error("No services are linked! Do `/api link` to link them."); // TODO: standardize these errors
+        throw new Error("No services are linked! Do `/api link` to link them.");
       }
 
       // TODO: this needs to be written to be way cleaner
@@ -275,8 +251,6 @@ export const playlist: ChatCommand = {
           await interaction.deferUpdate();
           const platform = interaction.values[0].split("_")[0];
           const id = interaction.values[0].split("_")[1];
-
-          console.log(platform, id);
 
           const response = await JoshAPI.unsyncPlaylist(
             interaction.channel!.id,

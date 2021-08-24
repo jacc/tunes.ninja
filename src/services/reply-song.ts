@@ -84,8 +84,6 @@ export async function returnLinks(
     },
   });
 
-  console.log(channels);
-
   if (channels) {
     channels.map(async (channel) => {
       let songID: string;
@@ -96,7 +94,6 @@ export async function returnLinks(
           )[1];
           break;
         case "apple-music":
-          console.log("bruh");
           songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
           break;
         default:
