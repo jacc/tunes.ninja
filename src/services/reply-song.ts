@@ -72,6 +72,12 @@ export async function returnLinks(
     );
   }
 
+  if (Math.floor(Math.random() * 10) == 2) {
+    embed.setDescription(
+      "*:ninja: Psst - tunes.ninja can link with your Spotify and Apple Music! Just do `/api link` to get started*"
+    );
+  }
+
   if (message instanceof Message) {
     await message.reply({ embeds: [embed], components: rows });
   } else {
