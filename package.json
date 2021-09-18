@@ -1,6 +1,6 @@
 {
   "name": "tunes.ninja",
-  "version": "1.0.0",
+  "version": "2.0.0-infdev",
   "main": "dist/index.js",
   "repository": "https://github.com/jacc/tunes.ninja.git",
   "author": "Jack LaFond <jack.lafond@icloud.com>",
