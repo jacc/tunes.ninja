@@ -62,9 +62,8 @@ export const playlist: ChatCommand = {
     );
 
     if (options.subCommandName === "sync") {
-      const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id);
+      const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id)
 
-      console.log(linked);
       const member = interaction.member as GuildMember;
 
       const canManageServer = member.permissions.has(
