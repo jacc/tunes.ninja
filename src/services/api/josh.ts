@@ -121,7 +121,9 @@ export class JoshAPI {
     );
 
     const body = await response.json();
+    console.log(body)
     if (response.status !== 200) {
+      if (body.code === "1993") throw new Error("Your Spotify credentials are missing! Do `/api link` to set this up.")
       throw new Error(body.reason);
     }
     return body;
@@ -150,6 +152,7 @@ export class JoshAPI {
 
     const body = await response.json();
     if (response.status !== 200) {
+      if (body.code === "1993") throw new Error("Your Spotify credentials are missing! Do `/api link` to set this up.")
       throw new Error(body.reason);
     }
     return body;
