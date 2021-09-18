@@ -181,7 +181,7 @@ scheduleJob("*/10 * * * *", async () => {
   });
 });
 
-scheduleJob("*/1 * * * *", async () => {
+scheduleJob("*/10 * * * *", async () => {
   const songs = await countSearches();
   const profiles = await countProfiles();
   const playlists = await countPlaylists();
