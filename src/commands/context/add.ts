@@ -38,7 +38,6 @@ export const playlists: MessageCommand = {
       const button =
         interaction.options.get("message")!.message!.components![0]
           .components[0];
-      console.log(button)
       if (button.type !== "BUTTON") return; // Do something, not a button
       if (button.style !== "LINK") return; // Do something, not a link button
       url = linkSchema.safeParse(button.url);

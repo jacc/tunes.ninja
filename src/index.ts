@@ -18,7 +18,7 @@ import {
   guildDelete,
   startupMessage,
 } from "./services/events/logging";
-import { countProfiles, countSearches } from "./services/util/count";
+import {countGuilds, countPlaylists, countProfiles, countSearches, countVotes} from "./services/util/count";
 import { BotRatelimited, UnknownSong } from "./structs/exceptions";
 import { scheduleJob } from "node-schedule";
 import { handleInteraction } from "./services/events/interaction";
@@ -181,15 +181,18 @@ scheduleJob("*/10 * * * *", async () => {
   });
 });
 
-scheduleJob("*/5 * * * *", async () => {
+scheduleJob("*/1 * * * *", async () => {
   const songs = await countSearches();
   const profiles = await countProfiles();
-  const guilds = await client.guilds.cache.size;
-  const votes = await new Topgg(client.user!.id).getVotes();
+  const playlists = await countPlaylists();
+  const guilds = await countGuilds(client);
+  const votes = await countVotes(client);
+
   await dd.send("bot.guilds", guilds);
   await dd.send("bot.songs", songs);
   await dd.send("bot.profiles", profiles);
-  await dd.send("bot.votes", votes.monthlyPoints);
+  await dd.send("bot.playlists", playlists);
+  await dd.send("bot.votes", votes);
 });
 
 prisma.$connect().then(async () => {
