@@ -14,11 +14,10 @@ Love,
 Jack, 8/22/21 at 10:22pm
  */
 
-import { CommandInteraction, Message, User } from "discord.js";
+import { User } from "discord.js";
 import fetch from "node-fetch";
 import { isDev } from "../../constants";
 import { JoshLink } from "../../types/josh";
-import { prisma } from "../prisma";
 
 export class JoshAPI {
   public static async linkUser(
@@ -46,7 +45,7 @@ export class JoshAPI {
 
     const body = await response.json();
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
     }
     return body.url;
   }
@@ -67,7 +66,7 @@ export class JoshAPI {
 
     const body = await response.json();
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
     }
     return body;
   }
@@ -94,7 +93,7 @@ export class JoshAPI {
     const body = await response.json();
 
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
     }
     return true;
   }
@@ -173,7 +172,7 @@ export class JoshAPI {
     );
     const body = await response.json();
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
     }
     return body;
   }
@@ -201,7 +200,7 @@ export class JoshAPI {
 
     const body = await response.json();
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
     }
     return body;
   }
@@ -226,7 +225,7 @@ export class JoshAPI {
     const body = await response.json();
 
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
     }
     return body;
   }
