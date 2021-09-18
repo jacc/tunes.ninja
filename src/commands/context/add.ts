@@ -31,13 +31,14 @@ export const playlists: MessageCommand = {
 
     let url;
     if (
-      interaction.options.get("message")!.message!.author.id ===
-        "840585628408217610" &&
-      interaction.options.get("message")!.message!.components
+        interaction.options.get("message")!.message!.author.id ===
+        interaction.client.user!.id &&
+        interaction.options.get("message")!.message!.components
     ) {
       const button =
         interaction.options.get("message")!.message!.components![0]
           .components[0];
+      console.log(button)
       if (button.type !== "BUTTON") return; // Do something, not a button
       if (button.style !== "LINK") return; // Do something, not a link button
       url = linkSchema.safeParse(button.url);

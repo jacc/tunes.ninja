@@ -106,7 +106,7 @@ export class JoshAPI {
     const response = await fetch(
       `${
         isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
-      }spotify/user/${user}/action/play/song`,
+      }spotify/play/song/now`,
       {
         method: "POST",
         headers: {
@@ -114,14 +114,43 @@ export class JoshAPI {
           Authorization: `${process.env.JOSH_AUTH}`,
         },
         body: JSON.stringify({
-          spotifyTrackID: song.toString(),
+          trackID: song.toString(),
+          discordUserID: user.toString()
         }),
       }
     );
 
     const body = await response.json();
     if (response.status !== 200) {
-      throw new Error(body.detail.reason);
+      throw new Error(body.reason);
+    }
+    return body;
+  }
+
+  public static async queueOnSpotify(
+      user: string,
+      song: string
+  ): Promise<string> {
+    const response = await fetch(
+        `${
+            isDev ? process.env.JOSH_DEV_BASE : process.env.JOSH_BASE
+        }spotify/play/song/queue`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `${process.env.JOSH_AUTH}`,
+          },
+          body: JSON.stringify({
+            trackID: song.toString(),
+            discordUserID: user.toString()
+          }),
+        }
+    );
+
+    const body = await response.json();
+    if (response.status !== 200) {
+      throw new Error(body.reason);
     }
     return body;
   }

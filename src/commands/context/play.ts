@@ -23,8 +23,8 @@ export const playOnSpotify: MessageCommand = {
 
     let url;
     if (
-      interaction.options.get("message")!.message!.author.id ===
-        "840585628408217610" &&
+        interaction.options.get("message")!.message!.author.id ===
+        interaction.client.user!.id &&
       interaction.options.get("message")!.message!.components
     ) {
       const button =

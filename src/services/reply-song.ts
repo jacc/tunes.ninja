@@ -114,6 +114,10 @@ export async function returnLinks(
         songID,
         channel.platform
       );
+
+      if (message instanceof Message) {
+        await message.react("🔁")
+      }
     });
   }
 

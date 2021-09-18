@@ -52,6 +52,7 @@ new VotesServer(client).start();
 Sentry.init({
   dsn: process.env.SENTRY,
   tracesSampleRate: 1.0,
+  release: "tunes.ninja@" + process.env.npm_package_version,
 });
 
 const dd = new DataDog();
