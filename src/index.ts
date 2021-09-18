@@ -18,14 +18,15 @@ import {
   guildDelete,
   startupMessage,
 } from "./services/events/logging";
-import { countProfiles, countSearches } from "./services/util/count";
+import {countGuilds, countPlaylists, countProfiles, countSearches, countVotes} from "./services/util/count";
 import { BotRatelimited, UnknownSong } from "./structs/exceptions";
 import { scheduleJob } from "node-schedule";
 import { handleInteraction } from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
 import { VotesServer } from "./services/util/server";
-import { DataDog } from "./services/api/datadog";
 import { Topgg } from "./services/api/topgg";
+import { DataDog } from "./services/api/datadog";
+import * as Sentry from "@sentry/node";
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -47,6 +48,13 @@ const client = new Client({
 });
 
 new VotesServer(client).start();
+
+Sentry.init({
+  dsn: process.env.SENTRY,
+  tracesSampleRate: 1.0,
+  release: "tunes.ninja@" + process.env.npm_package_version,
+});
+
 const dd = new DataDog();
 
 client.on("ready", async () => {
@@ -117,7 +125,8 @@ client.on("messageCreate", async (message) => {
     matches.map(async (link) => {
       try {
         if (
-          link.includes("spotify.com/track") ||
+          (link.includes("spotify.com/track") &&
+            permer.test(guildSettings!.reply_to, "replySpotify")) ||
           (link.includes("spotify.com/album") &&
             permer.test(guildSettings!.reply_to, "replySpotify"))
         ) {
@@ -154,7 +163,6 @@ client.on("messageCreate", async (message) => {
     });
   }
 });
-
 client.on("interactionCreate", handleInteraction);
 client.on("guildCreate", guildCreate);
 client.on("guildDelete", guildDelete);
@@ -173,15 +181,18 @@ scheduleJob("*/10 * * * *", async () => {
   });
 });
 
-scheduleJob("*/5 * * * *", async () => {
+scheduleJob("*/10 * * * *", async () => {
   const songs = await countSearches();
   const profiles = await countProfiles();
-  const guilds = await client.guilds.cache.size;
-  const votes = await new Topgg(client.user!.id).getVotes();
+  const playlists = await countPlaylists();
+  const guilds = await countGuilds(client);
+  const votes = await countVotes(client);
+
   await dd.send("bot.guilds", guilds);
   await dd.send("bot.songs", songs);
   await dd.send("bot.profiles", profiles);
-  await dd.send("bot.votes", votes.monthlyPoints);
+  await dd.send("bot.playlists", playlists);
+  await dd.send("bot.votes", votes);
 });
 
 prisma.$connect().then(async () => {
@@ -190,4 +201,8 @@ prisma.$connect().then(async () => {
   signale.info("Connected to Redis");
   await client.login(process.env.DISCORD_TOKEN);
   signale.info("Connected to Discord");
+});
+
+process.on("uncaughtException", async (err) => {
+  Sentry.captureException(err);
 });

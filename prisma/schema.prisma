@@ -27,6 +27,7 @@ model User {
 }
 
 model JoshChannel {
-  id      String  @id
-  premium Boolean
+  id      String
+  platform String
+  playlistID String @id
 }

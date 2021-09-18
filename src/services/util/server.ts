@@ -3,6 +3,7 @@ import * as TopGG from "@top-gg/sdk";
 import { redis } from "../redis";
 import * as logs from "../events/logging";
 import { AbstractAppService } from "./abstract-app-service";
+import {countGuilds, countPlaylists, countProfiles, countSearches, countVotes} from "./count";
 
 const SIX_HOURS_IN_SECONDS = 60 * 60 * 6;
 
@@ -29,6 +30,19 @@ export class VotesServer extends AbstractAppService {
       })
     );
 
-    this.app.listen(process.env.SERVER_PORT || 80);
+      this.app.get("/stats", async (req, res) => {
+          const songs = await countSearches();
+          const profiles = await countProfiles();
+          const playlists = await countPlaylists();
+          const guilds = await countGuilds(this.client);
+          const votes = await countVotes(this.client);
+
+          await res.send({
+              songs, profiles, playlists, guilds, votes
+          })
+      })
+
+    this.app.listen(process.env.SERVER_PORT || 8097);
   }
+
 }

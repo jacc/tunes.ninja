@@ -1,4 +1,4 @@
-import {Permer} from "permer";
+import { Permer } from "permer";
 
 /**
  * Whether or not the app is running in development mode
@@ -18,6 +18,7 @@ export const contributors = [
   "291050399509774340",
   "215143736114544640",
   "90339695967350784",
+  "140214425276776449",
 ];
 
 export const friends = [
@@ -27,4 +28,8 @@ export const friends = [
   "205039221050703872",
 ];
 
-export const permer = new Permer(["replySpotify", "replyAM", "replySoundcloud"]);
+export const permer = new Permer([
+  "replySpotify",
+  "replyAM",
+  "replySoundcloud",
+]);

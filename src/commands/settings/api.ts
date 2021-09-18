@@ -1,5 +1,7 @@
+import { MessageActionRow, MessageButton } from "discord.js";
 import { voted } from "../../inhibitors/voted";
 import { JoshAPI } from "../../services/api/josh";
+import { PLATFORM_EMOJI } from "../../services/reply-song";
 import { InteractionOptions } from "../../services/util/interactionOptions";
 import { ChatCommand } from "../../types/command";
 
@@ -27,22 +29,67 @@ export const api: ChatCommand = {
     );
 
     if (options.subCommandName === "link") {
-      const request = await JoshAPI.link(
-        interaction.guild!.id,
-        interaction.channel!.id,
-        interaction.user.id
-      );
+      const user = await JoshAPI.getUser(interaction.member!.user.id);
+
+      console.log(user);
+
+      const spotifyButton = new MessageButton()
+        .setCustomId("button_spotify_link")
+        .setLabel("Spotify")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["spotify"]);
+      user.services.spotify
+        ? spotifyButton.setDisabled(true).setLabel("Spotify (linked)")
+        : spotifyButton.setDisabled(false);
+
+      const appleMusicButton = new MessageButton()
+        .setCustomId("button_apple-music_link")
+        .setLabel("Apple Music")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["apple_music"]);
+      user.services.appleMusic
+        ? appleMusicButton.setDisabled(true).setLabel("Apple Music (linked)")
+        : appleMusicButton.setDisabled(false);
+
+      const row = new MessageActionRow().addComponents([
+        spotifyButton,
+        appleMusicButton,
+      ]);
 
       await interaction.reply({
-        content: `[Click here to link your Spotify account to tunes.ninja!](${request})`,
+        content: "Select a platform to link!",
+        components: [row],
         ephemeral: true,
       });
     } else if (options.subCommandName === "unlink") {
-      const request = await JoshAPI.unlink(interaction.user.id);
+      const user = await JoshAPI.getUser(interaction.member!.user.id);
 
-      if (!request) throw new Error("Internal error, do `/support");
+      const spotifyButton = new MessageButton()
+        .setCustomId("button_spotify_unlink")
+        .setLabel("Spotify")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["spotify"]);
+      user.services.spotify
+        ? spotifyButton.setDisabled(false)
+        : spotifyButton.setDisabled(true).setLabel("Spotify (unlinked)");
+
+      const appleMusicButton = new MessageButton()
+        .setCustomId("button_apple-music_unlink")
+        .setLabel("Apple Music")
+        .setStyle("SECONDARY")
+        .setEmoji(PLATFORM_EMOJI["apple_music"]);
+      user.services.appleMusic
+        ? appleMusicButton.setDisabled(false)
+        : appleMusicButton.setDisabled(true).setLabel("Apple Music (unlinked)");
+
+      const row = new MessageActionRow().addComponents([
+        spotifyButton,
+        appleMusicButton,
+      ]);
+
       await interaction.reply({
-        content: `If you had an account, it will be deleted!`,
+        content: "Select a platform to unlink!",
+        components: [row],
         ephemeral: true,
       });
     }
