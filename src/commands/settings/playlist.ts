@@ -53,7 +53,7 @@ export const playlist: ChatCommand = {
       type: "SUB_COMMAND",
     },
   ],
-  inhibitors: [botAdmins],
+  inhibitors: [],
   async run(interaction) {
     await interaction.deferReply();
 
