@@ -88,7 +88,7 @@ export const config: ChatCommand = {
         },
       });
 
-      await interaction.reply("👌");
+      await interaction.reply({ content: "👌", ephemeral: true });
       await redis.del(`settings:${interaction.guild!.id}`);
     } else if (options.subCommandName === "view") {
       if (!guildSettings) {

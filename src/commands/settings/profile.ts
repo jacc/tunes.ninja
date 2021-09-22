@@ -94,7 +94,7 @@ export const profile: ChatCommand = {
             break;
         }
       }
-      await interaction.reply("👌");
+      await interaction.reply({ content: "👌", ephemeral: true });
     } else if (options.subCommandName === "view") {
       await interaction.deferReply();
       const id =
