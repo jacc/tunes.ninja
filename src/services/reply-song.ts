@@ -66,16 +66,15 @@ export async function returnLinks(
     song.thumbnail ? song.thumbnail : ""
   );
 
-  if (Math.floor(Math.random() * 10) == 1) {
-    embed.setDescription(
-      "*:ninja: [Psst - vote for us on Top.gg! It really helps the developer out, so click this!](https://tunes.ninja/vote)*"
-    );
-  }
+  const hints = [
+    "[Psst - vote for us on Top.gg! It really helps the developer out, so click this!](https://tunes.ninja/vote)",
+    "Psst - tunes.ninja can link with your Spotify and Apple Music! Just do `/api link` to get started",
+    "Psst - tunes.ninja can make synced playlists right in Discord! Just do `/playlist sync` to get started!",
+  ];
+  const hint = hints[~~(Math.random() * hints.length)];
 
-  if (Math.floor(Math.random() * 10) == 2) {
-    embed.setDescription(
-      "*:ninja: Psst - tunes.ninja can link with your Spotify and Apple Music! Just do `/api link` to get started*"
-    );
+  if (Math.floor(Math.random() * 10) == 1) {
+    embed.setDescription(`:ninja: *${hint}*`);
   }
 
   if (message instanceof Message) {
@@ -116,7 +115,7 @@ export async function returnLinks(
       );
 
       if (message instanceof Message) {
-        await message.react("🔁")
+        await message.react("🔁");
       }
     });
   }

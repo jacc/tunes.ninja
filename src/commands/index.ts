@@ -16,7 +16,8 @@ import { playlists } from "./context/add";
 import { api } from "./settings/api";
 import { playOnSpotify } from "./context/play";
 import { source } from "./util/source";
-import {queueOnSpotify} from "./context/queue";
+import { queueOnSpotify } from "./context/queue";
+import { lyrics } from "./util/lyrics";
 
 export const chatCommands: ChatCommand[] = [
   ping,
@@ -31,10 +32,15 @@ export const chatCommands: ChatCommand[] = [
   playlist,
   api,
   source,
-  support
+  support,
+  lyrics,
 ];
 
-export const messageCommands: MessageCommand[] = [playlists, playOnSpotify, queueOnSpotify];
+export const messageCommands: MessageCommand[] = [
+  playlists,
+  playOnSpotify,
+  queueOnSpotify,
+];
 
 export const userCommands: UserCommand[] = [getSong];
 
