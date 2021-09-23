@@ -52,6 +52,12 @@ export const playlist: ChatCommand = {
       description: "Unsync this channel from the playlist.",
       type: "SUB_COMMAND",
     },
+    {
+      name: "view",
+      description:
+        "View playlists synced to this channel and get links to them.",
+      type: "SUB_COMMAND",
+    },
   ],
   inhibitors: [],
   async run(interaction) {
@@ -62,7 +68,7 @@ export const playlist: ChatCommand = {
     );
 
     if (options.subCommandName === "sync") {
-      const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id)
+      const linked = await JoshAPI.getLinkedPlaylists(interaction.channel!.id);
 
       const member = interaction.member as GuildMember;
 
@@ -266,6 +272,74 @@ export const playlist: ChatCommand = {
             where: {
               playlistID: id,
             },
+          });
+        })
+        .catch(async (e) => {
+          await interaction.deleteReply();
+        });
+    } else if (options.subCommandName === "view") {
+      const member = interaction.member as GuildMember;
+
+      const synced = await JoshAPI.getLinkedPlaylists(interaction.channel!.id);
+
+      if (
+        !synced.playlists.spotify.length &&
+        !synced.playlists.appleMusic.length
+      ) {
+        throw new Error(
+          "No synced playlists found! Do `/playlist sync` to start."
+        );
+      }
+
+      const menu = new MessageSelectMenu()
+        .setCustomId(`select_${interaction.user.id}_unsync`)
+        .setPlaceholder(`Select a playlist from the list`);
+
+      for (const service in synced.playlists) {
+        synced.playlists[service].map(
+          (p: {
+            playlistTitle: string;
+            playlistLinkedPlatformUniqueID: string;
+          }) => {
+            return menu.addOptions({
+              label: `${p.playlistTitle}`,
+              value: `${service}_${p.playlistLinkedPlatformUniqueID}`,
+              description: `ID: ${p.playlistLinkedPlatformUniqueID}`,
+              emoji: PLATFORM_EMOJI[service],
+            });
+          }
+        );
+      }
+
+      const row = new MessageActionRow().addComponents(menu);
+
+      const msg = await interaction.editReply({
+        content: "Select a playlist.",
+        components: [row],
+      });
+
+      const filter = (i: any) => {
+        return i.user.id === interaction.user.id;
+      };
+
+      await (msg as Message)
+        .awaitMessageComponent({
+          filter,
+          componentType: "SELECT_MENU",
+          time: 10000,
+        })
+        .then(async (interaction) => {
+          await interaction.deferUpdate();
+          const platform = interaction.values[0].split("_")[0];
+          const id = interaction.values[0].split("_")[1];
+
+          await interaction.editReply({
+            content: `${
+              platform! === "apple-music"
+                ? `https://music.apple.com/playlist/${id}`
+                : `https://open.spotify.com/playlist/${id}`
+            }`,
+            components: [],
           });
         })
         .catch(async (e) => {
