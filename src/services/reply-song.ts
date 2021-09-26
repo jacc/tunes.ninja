@@ -19,7 +19,8 @@ const dd = new DataDog();
 export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
   link: string,
-  plays?: number
+  plays?: number,
+  lastfm?: string
 ): Promise<void> {
   let author: User | GuildMember | APIInteractionGuildMember | null;
 
@@ -79,7 +80,7 @@ export async function returnLinks(
   }
 
   if (plays)
-    embed.setFooter(`${author?.tag} has ${plays} scrobbles on this track`);
+    embed.setFooter(`${lastfm} has ${plays} scrobbles on this track`);
 
   if (message instanceof Message) {
     await message.reply({ embeds: [embed], components: rows });

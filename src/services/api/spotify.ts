@@ -27,10 +27,10 @@ export class SpotifyAPI {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
     const search = await spotifyApi.searchTracks(query, { limit: 1 });
+
     if (!search.body.tracks?.items.length) {
       throw new UnknownSong();
     }
-    console.log(search.body.tracks.items[0]);
 
     return search.body.tracks.items[0].uri;
   }
@@ -41,6 +41,7 @@ export class SpotifyAPI {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
     const search = await spotifyApi.searchTracks(query, { limit: 1 });
+
     if (!search.body.tracks?.items.length) {
       throw new UnknownSong();
     }
@@ -56,6 +57,7 @@ export class SpotifyAPI {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
     const search = await spotifyApi.searchAlbums(query, { limit: 1 });
+
     if (!search.body.albums?.items.length) {
       throw new UnknownAlbum();
     }
