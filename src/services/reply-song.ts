@@ -18,7 +18,8 @@ const dd = new DataDog();
 
 export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
-  link: string
+  link: string,
+  plays?: number
 ): Promise<void> {
   let author: User | GuildMember | APIInteractionGuildMember | null;
 
@@ -76,6 +77,9 @@ export async function returnLinks(
   if (Math.floor(Math.random() * 10) == 1) {
     embed.setDescription(`:ninja: *${hint}*`);
   }
+
+  if (plays)
+    embed.setFooter(`${author?.tag} has ${plays} scrobbles on this track`);
 
   if (message instanceof Message) {
     await message.reply({ embeds: [embed], components: rows });

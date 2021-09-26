@@ -17,12 +17,14 @@ export const fm: ChatCommand = {
       where: { id: interaction.member?.user.id },
     });
 
+    console.log(userSettings);
+
     if (!userSettings || !userSettings.lastfm) {
       throw new NoProfile();
     }
 
     const lastfm = await LastFMAPI.search(userSettings.lastfm);
     const song = await SpotifyAPI.searchSong(`${lastfm.song} ${lastfm.artist}`);
-    await returnLinks(interaction, song);
+    await returnLinks(interaction, song, lastfm.plays);
   },
 };
