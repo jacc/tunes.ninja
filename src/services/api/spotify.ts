@@ -30,7 +30,26 @@ export class SpotifyAPI {
     if (!search.body.tracks?.items.length) {
       throw new UnknownSong();
     }
+    console.log(search.body.tracks.items[0]);
+
     return search.body.tracks.items[0].uri;
+  }
+
+  public static async searchSongMetaData(
+    query: string
+  ): Promise<{ artist: string; title: string; thumbnail: string }> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    const search = await spotifyApi.searchTracks(query, { limit: 1 });
+    if (!search.body.tracks?.items.length) {
+      throw new UnknownSong();
+    }
+
+    return {
+      artist: search.body.tracks.items[0].artists[0].name,
+      title: search.body.tracks.items[0].name,
+      thumbnail: search.body.tracks.items[0].album.images[0].url,
+    };
   }
 
   public static async searchAlbum(query: string): Promise<string> {
