@@ -60,3 +60,16 @@ export function countVotes(client: Client): Promise<number> {
     );
 }
 
+export function getApiVersion(): Promise<string> {
+    return wrapRedis(
+        "api:version",
+        async () => {
+            const req = await fetch("https://api.tunes.ninja/")
+            const res = await req.json()
+            return res["version"] || "0.w.0"
+        },
+        TEN_MINUTES_IN_SECONDS
+    );
+}
+
+

@@ -3,7 +3,7 @@ import * as TopGG from "@top-gg/sdk";
 import { redis } from "../redis";
 import * as logs from "../events/logging";
 import { AbstractAppService } from "./abstract-app-service";
-import {countGuilds, countPlaylists, countProfiles, countSearches, countVotes} from "./count";
+import {countGuilds, countPlaylists, countProfiles, countSearches, countVotes, getApiVersion} from "./count";
 
 const SIX_HOURS_IN_SECONDS = 60 * 60 * 6;
 
@@ -34,11 +34,12 @@ export class VotesServer extends AbstractAppService {
           const songs = await countSearches();
           const profiles = await countProfiles();
           const playlists = await countPlaylists();
+          const api = await getApiVersion();
           const guilds = await countGuilds(this.client);
           const votes = await countVotes(this.client);
 
           await res.send({
-              songs, profiles, playlists, guilds, votes
+              songs, profiles, playlists, guilds, votes, api
           })
       })
 
