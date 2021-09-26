@@ -1,10 +1,10 @@
-import {ChatCommand} from "../../types/command";
-import {returnLinks} from "../../services/reply-song";
-import {SpotifyAPI} from "../../services/api/spotify";
-import {LastFMAPI} from "../../services/api/lastfm";
-import {prisma} from "../../services/prisma";
-import {NoProfile} from "../../structs/exceptions";
-import {voted} from "../../inhibitors/voted";
+import { ChatCommand } from "../../types/command";
+import { returnLinks } from "../../services/reply-song";
+import { SpotifyAPI } from "../../services/api/spotify";
+import { LastFMAPI } from "../../services/api/lastfm";
+import { prisma } from "../../services/prisma";
+import { NoProfile } from "../../structs/exceptions";
+import { voted } from "../../inhibitors/voted";
 
 export const fm: ChatCommand = {
   name: "fm",
@@ -14,7 +14,7 @@ export const fm: ChatCommand = {
 
   async run(interaction) {
     const userSettings = await prisma.user.findFirst({
-      where: {id: interaction.member?.user.id},
+      where: { id: interaction.member?.user.id },
     });
 
     if (!userSettings || !userSettings.lastfm) {
@@ -22,7 +22,7 @@ export const fm: ChatCommand = {
     }
 
     const lastfm = await LastFMAPI.search(userSettings.lastfm);
-    const song = await SpotifyAPI.search(`${lastfm.song} ${lastfm.artist}`);
+    const song = await SpotifyAPI.searchSong(`${lastfm.song} ${lastfm.artist}`);
     await returnLinks(interaction, song);
   },
 };

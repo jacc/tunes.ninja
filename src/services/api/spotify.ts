@@ -1,4 +1,4 @@
-import { UnknownSong } from "../../structs/exceptions";
+import { UnknownAlbum, UnknownSong } from "../../structs/exceptions";
 import SpotifyWebApi from "spotify-web-api-node";
 import { wrapRedis } from "../redis";
 
@@ -23,7 +23,7 @@ export class SpotifyAPI {
     );
   }
 
-  public static async search(query: string): Promise<string> {
+  public static async searchSong(query: string): Promise<string> {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
     const search = await spotifyApi.searchTracks(query, { limit: 1 });
@@ -31,5 +31,15 @@ export class SpotifyAPI {
       throw new UnknownSong();
     }
     return search.body.tracks.items[0].uri;
+  }
+
+  public static async searchAlbum(query: string): Promise<string> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    const search = await spotifyApi.searchAlbums(query, { limit: 1 });
+    if (!search.body.albums?.items.length) {
+      throw new UnknownAlbum();
+    }
+    return search.body.albums.items[0].uri;
   }
 }

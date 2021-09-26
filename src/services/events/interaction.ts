@@ -84,6 +84,7 @@ export async function handleContextInteraction(
             });
           }
         } catch (error) {
+          console.log(error);
           console.log("just give up");
         }
     }
