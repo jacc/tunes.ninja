@@ -12,6 +12,7 @@ import * as z from "zod";
 import { voted } from "../../inhibitors/voted";
 import { platforms } from "../../services/events/interaction";
 import { PLATFORM_EMOJI } from "../../services/reply-song";
+import { error } from "signale";
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -31,9 +32,9 @@ export const playlists: MessageCommand = {
 
     let url;
     if (
-        interaction.options.get("message")!.message!.author.id ===
+      interaction.options.get("message")!.message!.author.id ===
         interaction.client.user!.id &&
-        interaction.options.get("message")!.message!.components
+      interaction.options.get("message")!.message!.components
     ) {
       const button =
         interaction.options.get("message")!.message!.components![0]
@@ -54,6 +55,8 @@ export const playlists: MessageCommand = {
     }
 
     const song = await SongsApi.getLinks(url.data);
+
+    console.log(song);
 
     const user = await JoshAPI.getUser(interaction.user.id);
 
@@ -76,12 +79,26 @@ export const playlists: MessageCommand = {
 
         switch (platform) {
           case "spotify":
-            songID = song.links!.spotify!.split(
-              "https://open.spotify.com/track/"
-            )[1];
-            break;
+            try {
+              songID = song.links!.spotify!.split(
+                "https://open.spotify.com/track/"
+              )[1];
+              break;
+            } catch {
+              throw new Error(
+                "I couldn't find a valid song link in this message - check and try again."
+              );
+            }
+
           case "appleMusic":
-            songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
+            try {
+              songID = song.links!.apple_music!.split("i=")[1].split("&")[0];
+              break;
+            } catch {
+              throw new Error(
+                "I couldn't find a valid song link in this message - check and try again."
+              );
+            }
         }
 
         console.log(playlists.playlists);
@@ -111,6 +128,8 @@ export const playlists: MessageCommand = {
         rows.push(row);
       }
     }
+
+    console.log(rows);
 
     const embed = new MessageEmbed()
       .setAuthor(
