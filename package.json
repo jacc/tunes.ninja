@@ -33,7 +33,7 @@
     "datadog-metrics": "^0.9.3",
     "dayjs": "^1.10.7",
     "discord-reply": "^0.1.2",
-    "discord.js": "^13.1.0-dev.1628683680.75b48d8",
+    "discord.js": "discordjs/discord.js#6672/head",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "ioredis": "^4.24.2",

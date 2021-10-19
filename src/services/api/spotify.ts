@@ -2,6 +2,8 @@ import { UnknownAlbum, UnknownSong } from "../../structs/exceptions";
 import SpotifyWebApi from "spotify-web-api-node";
 import { wrapRedis } from "../redis";
 
+const TWELVE_HOURS_IN_SECONDS = 60 * 60 * 12;
+
 const spotifyApi = new SpotifyWebApi({
   clientId: `${process.env.SPOTIFY_ID}`,
   clientSecret: `${process.env.SPOTIFY_SECRET}`,
@@ -33,6 +35,24 @@ export class SpotifyAPI {
     }
 
     return search.body.tracks.items[0].uri;
+  }
+
+  public static async searchSongs(query: string): Promise<any> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    const search = await spotifyApi.searchTracks(query, { limit: 24 });
+
+    return search.body.tracks;
+  }
+
+  public static async topSongs(): Promise<any> {
+    return wrapRedis('spotify:topSongs', async () => {
+      const auth = await this.getAuthorization();
+      await spotifyApi.setAccessToken(auth);
+      const search = await spotifyApi.getPlaylistTracks('37i9dQZEVXbMDoHDwVN2tF');
+      return search.body
+    }, TWELVE_HOURS_IN_SECONDS)
+
   }
 
   public static async searchSongMetaData(

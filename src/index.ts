@@ -21,7 +21,7 @@ import {
 import {countGuilds, countPlaylists, countProfiles, countSearches, countVotes} from "./services/util/count";
 import { BotRatelimited, UnknownSong } from "./structs/exceptions";
 import { scheduleJob } from "node-schedule";
-import { handleInteraction } from "./services/events/interaction";
+import {handleAutocompleteInteraction, handleInteraction} from "./services/events/interaction";
 import AutoPoster from "topgg-autoposter";
 import { VotesServer } from "./services/util/server";
 import { Topgg } from "./services/api/topgg";
@@ -47,7 +47,7 @@ const client = new Client({
   allowedMentions: { parse: ["users", "roles"], repliedUser: false },
 });
 
-new VotesServer(client).start();
+// new VotesServer(client).start();
 
 Sentry.init({
   dsn: process.env.SENTRY,

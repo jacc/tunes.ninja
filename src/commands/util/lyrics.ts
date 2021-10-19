@@ -6,6 +6,7 @@ import { fetchGenius } from "../../services/api/genius";
 import { StandardEmbed } from "../../structs/standard-embed";
 import { GuildMember, MessageEmbed, User } from "discord.js";
 import { SongsApi } from "../../services/api/song";
+import {UnknownSong} from "../../structs/exceptions";
 
 export const lyrics: ChatCommand = {
   name: "lyrics",
@@ -15,16 +16,11 @@ export const lyrics: ChatCommand = {
 
   options: [
     {
-      name: "artist",
-      description: "Name of artist.",
-      type: "STRING",
-      required: false,
-    },
-    {
       name: "song",
       description: "Name of song.",
       type: "STRING",
       required: false,
+      autocomplete: true
     },
   ],
   async run(interaction) {
@@ -40,28 +36,50 @@ export const lyrics: ChatCommand = {
       (activity: { name: string }) => activity.name === "Spotify"
     );
 
-    if (!activity && !options.has("artist") && !options.has("title"))
+    if (!activity && !options.has("song"))
       throw new Error("No Spotify presence found or arguments passed.");
 
-    const artist = options.has("artist")
-      ? options.get("artist")
-      : activity?.state;
     const title = options.has("song") ? options.get("song") : activity?.details;
+    const artist = activity?.state;
 
-    const song = await SpotifyAPI.searchSongMetaData(`${artist} ${title}`);
+    if (title.includes("spotify:track")) {
+      const songInfo = await SongsApi.getLinks(`https://open.spotify.com/track/${title.split(":")[2]}`)
+      if (!songInfo) {
+        throw new UnknownSong();
+      }
 
-    const lyrics = await fetchGenius({
-      artist: song.artist,
-      title: song.title,
-    });
+      const song = await SpotifyAPI.searchSongMetaData(`${songInfo.title} ${songInfo.artist}`);
 
-    const embed = new MessageEmbed()
-      .setAuthor(
-        `Lyrics for ${song.title} by ${song.artist}`,
-        song.thumbnail ? song.thumbnail : ""
-      )
-      .setDescription(lyrics.staticLyrics!)
-      .setFooter("Inaccurate or wrong? Please do /support and let us know!");
-    await interaction.editReply({ embeds: [embed] });
+      const lyrics = await fetchGenius({
+        artist: song.artist,
+        title: song.title,
+      });
+
+      const embed = new MessageEmbed()
+          .setAuthor(
+              `Lyrics for ${song.title} by ${song.artist}`,
+              song.thumbnail ? song.thumbnail : ""
+          )
+          .setDescription(lyrics.staticLyrics!)
+          .setFooter("Inaccurate or wrong? Please do /support and let us know!");
+      await interaction.editReply({ embeds: [embed] });
+
+    } else {
+      const song = await SpotifyAPI.searchSongMetaData(`${title} ${artist}`);
+
+      const lyrics = await fetchGenius({
+        artist: song.artist,
+        title: song.title,
+      });
+
+      const embed = new MessageEmbed()
+          .setAuthor(
+              `Lyrics for ${song.title} by ${song.artist}`,
+              song.thumbnail ? song.thumbnail : ""
+          )
+          .setDescription(lyrics.staticLyrics!)
+          .setFooter("Inaccurate or wrong? Please do /support and let us know!");
+      await interaction.editReply({ embeds: [embed] });
+    }
   },
 };
