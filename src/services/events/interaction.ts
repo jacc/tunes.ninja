@@ -228,7 +228,6 @@ export async function handleButtonInteraction(
 
 export async function handleAutocompleteInteraction(interaction: AutocompleteInteraction): Promise<void> {
   const query = interaction.options.get("song")
-  // console.log(songs.items.map((song: any) => console.log(song.track.album.name)))
   if (!query?.value) {
     const songs = await SpotifyAPI.topSongs()
     await interaction.respond([
@@ -236,11 +235,10 @@ export async function handleAutocompleteInteraction(interaction: AutocompleteInt
         name: "Start typing to search a song on Spotify",
         value: ''
       },
-      ...songs.items.slice(0, 24).map((song: any) => ({ name: `${song.track.album.name} by ${song.track.artists[0].name}`, value: '' }))
+      ...songs.items.slice(0, 24).map((song: any) => ({ name: `${song.track.name} by ${song.track.artists[0].name}`, value: `${song.track.uri}` }))
     ])
   } else {
     const songs = await SpotifyAPI.searchSongs(query.value as string)
-    console.log(songs)
     await interaction.respond([
       ...songs.items.slice(0, 25).map((song: any) => ({ name: `${song.name} by ${song.artists[0].name}`, value: `${song.uri}` }))
     ])
