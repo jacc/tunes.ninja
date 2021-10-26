@@ -19,6 +19,7 @@ import { source } from "./util/source";
 import { queueOnSpotify } from "./context/queue";
 import { lyrics } from "./util/lyrics";
 import { album } from "./util/album";
+import {analyze} from "./util/analyze";
 
 export const chatCommands: ChatCommand[] = [
   ping,
@@ -36,6 +37,7 @@ export const chatCommands: ChatCommand[] = [
   support,
   lyrics,
   album,
+    analyze
 ];
 
 export const messageCommands: MessageCommand[] = [

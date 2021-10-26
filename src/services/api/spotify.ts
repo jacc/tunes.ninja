@@ -37,6 +37,14 @@ export class SpotifyAPI {
     return search.body.tracks.items[0].uri;
   }
 
+  public static async analyzeAudio(query: string): Promise<SpotifyApi.AudioAnalysisResponse> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    const search = await spotifyApi.getAudioFeaturesForTrack(query);
+
+    return search.body;
+  }
+
   public static async searchSongs(query: string): Promise<any> {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
@@ -57,7 +65,7 @@ export class SpotifyAPI {
 
   public static async searchSongMetaData(
     query: string
-  ): Promise<{ artist: string; title: string; thumbnail: string }> {
+  ): Promise<{ artist: string; title: string; thumbnail: string, uri: string}> {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
     const search = await spotifyApi.searchTracks(query, { limit: 1 });
@@ -70,6 +78,7 @@ export class SpotifyAPI {
       artist: search.body.tracks.items[0].artists[0].name,
       title: search.body.tracks.items[0].name,
       thumbnail: search.body.tracks.items[0].album.images[0].url,
+      uri: search.body.tracks.items[0].uri
     };
   }
 
