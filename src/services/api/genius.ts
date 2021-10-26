@@ -26,11 +26,10 @@ export const fetchGenius = async (data: LyricsRequest) => {
         syncedLyrics: null,
       };
     }
-    const results = searchData.response.hits.map((hit: any) => {
-      return { uniqueLookup: hit.result.url };
-    });
 
-    const scraperResult = await axios.get(results[0].uniqueLookup, {
+    const results = searchData.response.hits.filter((hit: any) => hit.result.url.includes('lyrics'));
+
+    const scraperResult = await axios.get(results[0].result.url, {
       validateStatus: (code) => code === 200,
       headers: {
         authorization: `Bearer ${process.env.GENIUS_AUTH}`,
