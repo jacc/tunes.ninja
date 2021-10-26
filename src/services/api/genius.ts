@@ -3,9 +3,11 @@ import { load } from "cheerio";
 
 export const fetchGenius = async (data: LyricsRequest) => {
   const optimizedFetchTitle = `${data.artist} - ${data.title}`;
-  const requestURL = `https://api.genius.com/search?q=${encodeURIComponent(
+  const requestURL = `https://api.genius.com/search?q=${fixedEncodeURIComponent(
     optimizedFetchTitle
   )}`;
+
+  console.log(requestURL)
 
   try {
     const searchResult = await axios.get(requestURL, {
@@ -77,4 +79,10 @@ interface LyricsRequest {
   title: string;
   artist: string;
   album?: string;
+}
+
+function fixedEncodeURIComponent(str: string) {
+  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+    return '%' + c.charCodeAt(0).toString(16);
+  });
 }
