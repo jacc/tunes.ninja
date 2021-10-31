@@ -228,6 +228,8 @@ export async function handleButtonInteraction(
 
 export async function handleAutocompleteInteraction(interaction: AutocompleteInteraction): Promise<void> {
   if (interaction.commandName === "song") return handleSongAutocomplete(interaction)
+  if (interaction.commandName === "analyze") return handleSongAutocomplete(interaction)
+  if (interaction.commandName === "lyrics") return handleSongAutocomplete(interaction)
   if (interaction.commandName === "album") return handleAlbumAutocomplete(interaction)
   if (interaction.commandName === "artist") return handleArtistAutocomplete(interaction)
 
