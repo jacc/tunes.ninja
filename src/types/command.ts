@@ -1,7 +1,7 @@
 import {
   ChatInputApplicationCommandData,
   CommandInteraction,
-  ContextMenuInteraction,
+  ContextMenuInteraction, Interaction,
   MessageApplicationCommandData,
   UserApplicationCommandData,
 } from "discord.js";
@@ -26,4 +26,4 @@ export interface UserCommand extends UserApplicationCommandData {
   run(interaction: ContextMenuInteraction): Promise<void>;
 }
 
-export type Inhibitor = (interaction: CommandInteraction) => Promise<void> | void;
+export type Inhibitor = (interaction: Interaction) => Promise<void> | void;

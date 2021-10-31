@@ -129,8 +129,7 @@ export const profile: ChatCommand = {
             `:musical_note: ${lastfmData.np ? "Currently listening to" : "Last listened to"}`,
             `${lastfmData.song} by ${lastfmData.artist}`
           );
-        } catch (error) {
-          throw new Error(error);
+        } catch {
         }
       }
 

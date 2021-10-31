@@ -37,7 +37,7 @@ export async function handleInteraction(
 export async function handleContextInteraction(
   interaction: ContextMenuInteraction
 ): Promise<void> {
-  dd.inc(`interactions.ContextMenuInteraction.run`);
+  await dd.inc(`interactions.ContextMenuInteraction.run`);
   let command;
 
   switch (interaction.targetType) {
@@ -61,7 +61,7 @@ export async function handleContextInteraction(
     }
 
     await command.run(interaction);
-  } catch (e) {
+  } catch (e: any) {
     Sentry.captureException(e);
     switch (true) {
       case e instanceof DiscordAPIError:
@@ -112,7 +112,7 @@ export async function handleMessageInteraction(
         await inhibitor(interaction);
       }
       await command.run(interaction);
-    } catch (e) {
+    } catch (e: any) {
       switch (true) {
         case e instanceof DiscordAPIError:
           break;
@@ -141,7 +141,7 @@ export async function handleMessageInteraction(
           }
       }
     }
-  } catch (e) {
+  } catch (e: any) {
     Sentry.captureException(e);
   }
 }
@@ -174,7 +174,7 @@ export async function handleSelectInteraction(
         components: [],
       });
     }
-  } catch (e) {
+  } catch (e: any) {
     Sentry.captureException(e);
   }
 }
@@ -221,7 +221,7 @@ export async function handleButtonInteraction(
           : "Couldn't unlink.",
       });
     }
-  } catch (e) {
+  } catch (e: any) {
     Sentry.captureException(e);
   }
 }
