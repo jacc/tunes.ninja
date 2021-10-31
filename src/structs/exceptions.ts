@@ -4,6 +4,12 @@ export class UnknownSong extends Error {
   }
 }
 
+export class UnknownAlbum extends Error {
+  constructor() {
+    super("This album was not found.");
+  }
+}
+
 export class UnknownLastFM extends Error {
   constructor() {
     super("Couldn't find any activity for this Last.fm user.");
@@ -18,6 +24,8 @@ export class BotRatelimited extends Error {
 
 export class NoProfile extends Error {
   constructor() {
-    super("You don't have a profile! Do `/profile edit lastfm` to set your Last.fm username!");
+    super(
+      "You don't have a profile! Do `/profile edit lastfm` to set your Last.fm username!"
+    );
   }
 }

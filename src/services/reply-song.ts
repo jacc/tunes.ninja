@@ -18,7 +18,9 @@ const dd = new DataDog();
 
 export async function returnLinks(
   message: Message | CommandInteraction | ContextMenuInteraction,
-  link: string
+  link: string,
+  plays?: number,
+  lastfm?: string
 ): Promise<void> {
   let author: User | GuildMember | APIInteractionGuildMember | null;
 
@@ -66,17 +68,19 @@ export async function returnLinks(
     song.thumbnail ? song.thumbnail : ""
   );
 
+  const hints = [
+    "[Psst - vote for us on Top.gg! It really helps the developer out, so click this!](https://tunes.ninja/vote)",
+    "Psst - tunes.ninja can link with your Spotify and Apple Music! Just do `/api link` to get started",
+    "Psst - tunes.ninja can make synced playlists right in Discord! Just do `/playlist sync` to get started!",
+  ];
+  const hint = hints[~~(Math.random() * hints.length)];
+
   if (Math.floor(Math.random() * 10) == 1) {
-    embed.setDescription(
-      "*:ninja: [Psst - vote for us on Top.gg! It really helps the developer out, so click this!](https://tunes.ninja/vote)*"
-    );
+    embed.setDescription(`:ninja: *${hint}*`);
   }
 
-  if (Math.floor(Math.random() * 10) == 2) {
-    embed.setDescription(
-      "*:ninja: Psst - tunes.ninja can link with your Spotify and Apple Music! Just do `/api link` to get started*"
-    );
-  }
+  if (plays)
+    embed.setFooter(`${lastfm} has ${plays} scrobbles on this track`);
 
   if (message instanceof Message) {
     await message.reply({ embeds: [embed], components: rows });
@@ -116,7 +120,7 @@ export async function returnLinks(
       );
 
       if (message instanceof Message) {
-        await message.react("🔁")
+        await message.react("🔁");
       }
     });
   }

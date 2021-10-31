@@ -3,15 +3,16 @@ import { InteractionOptions } from "../../services/util/interactionOptions";
 import { returnLinks } from "../../services/reply-song";
 import { SpotifyAPI } from "../../services/api/spotify";
 
-export const song: ChatCommand = {
-  name: "song",
-  description: "Search for song based on query.",
+export const album: ChatCommand = {
+  name: "album",
+  description: "Search for album based on query.",
   inhibitors: [],
   type: "CHAT_INPUT",
+
   options: [
     {
-      name: "song",
-      description: "Name of song and artist.",
+      name: "query",
+      description: "name of album.",
       type: "STRING",
       required: true,
       autocomplete: true
@@ -21,18 +22,18 @@ export const song: ChatCommand = {
     const options = new InteractionOptions(
       interaction.options.data as unknown as InteractionOptions[]
     );
-    if(options.get('song').includes("spotify:track")) {
+
+    if(options.get('query').includes("spotify:album")) {
       await returnLinks(
           interaction,
-          `https://open.spotify.com/track/${options.get('song').split(":")[2]}`
+          `https://open.spotify.com/album/${options.get('query').split(":")[2]}`
       );
     } else {
-      const song = await SpotifyAPI.searchSong(options.get("song"));
+      const song = await SpotifyAPI.searchAlbum(options.get("query"));
       await returnLinks(
           interaction,
-          `https://open.spotify.com/track/${song.split(":")[2]}`
+          `https://open.spotify.com/album/${song.split(":")[2]}`
       );
     }
-
   },
 };
