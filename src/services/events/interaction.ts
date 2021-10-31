@@ -227,23 +227,65 @@ export async function handleButtonInteraction(
 }
 
 export async function handleAutocompleteInteraction(interaction: AutocompleteInteraction): Promise<void> {
-  const query = interaction.options.get("song")
-  if (!query?.value) {
-    const songs = await SpotifyAPI.topSongs()
-    await interaction.respond([
-      {
-        name: "Start typing to search a song on Spotify",
-        value: ''
-      },
-      ...songs.items.slice(0, 24).map((song: any) => ({ name: `${song.track.name} by ${song.track.artists[0].name}`, value: `${song.track.uri}` }))
-    ])
-  } else {
-    const songs = await SpotifyAPI.searchSongs(query.value as string)
-    await interaction.respond([
-      ...songs.items.slice(0, 25).map((song: any) => ({ name: `${song.name} by ${song.artists[0].name}`, value: `${song.uri}` }))
-    ])
-  }
+  if (interaction.commandName === "song") return handleSongAutocomplete(interaction)
+  if (interaction.commandName === "album") return handleAlbumAutocomplete(interaction)
+  if (interaction.commandName === "artist") return handleArtistAutocomplete(interaction)
 
+
+  async function handleSongAutocomplete(interaction: AutocompleteInteraction) : Promise<void> {
+    const query = interaction.options.get("song")
+    if (!query?.value) {
+      const songs = await SpotifyAPI.topSongs()
+      await interaction.respond([
+        {
+          name: "Start typing to search a song on Spotify",
+          value: ''
+        },
+        ...songs.items.slice(0, 24).map((song: any) => ({ name: `${song.track.name} by ${song.track.artists[0].name}`, value: `${song.track.uri}` }))
+      ])
+    } else {
+      const songs = await SpotifyAPI.searchSongs(query.value as string)
+      await interaction.respond([
+        ...songs.items.slice(0, 25).map((song: any) => ({ name: `${song.name} by ${song.artists[0].name}`, value: `${song.uri}` }))
+      ])
+    }
+  }
+  async function handleAlbumAutocomplete(interaction: AutocompleteInteraction) : Promise<void> {
+    const query = interaction.options.get("query")
+    if (!query?.value) {
+      const songs = await SpotifyAPI.topSongs()
+      await interaction.respond([
+        {
+          name: "Start typing to search a album on Spotify",
+          value: ''
+        },
+        ...songs.items.slice(0, 24).map((song: any) => ({ name: `${song.track.album.name} by ${song.track.album.artists[0].name}`, value: `${song.track.album.uri}` }))
+      ])
+    } else {
+      const songs = await SpotifyAPI.searchAlbums(query.value as string)
+      await interaction.respond([
+        ...songs.items.slice(0, 25).map((song: any) => ({ name: `${song.name} by ${song.artists[0].name}`, value: `${song.uri}` }))
+      ])
+    }
+  }
+  async function handleArtistAutocomplete(interaction: AutocompleteInteraction) : Promise<void> {
+    const query = interaction.options.get("query")
+    if (!query?.value) {
+      const songs = await SpotifyAPI.topSongs()
+      await interaction.respond([
+        {
+          name: "Start typing to search an artist on Spotify",
+          value: ''
+        },
+        ...songs.items.slice(0, 24).map((song: any) => ({ name: `${song.track.artists[0].name}`, value: `${song.track.artists[0].name}` }))
+      ])
+    } else {
+      const songs = await SpotifyAPI.searchArtists(query.value as string)
+      await interaction.respond([
+        ...songs.items.slice(0, 25).map((song: any) => ({ name: `${song.name}`, value: `${song.name}` }))
+      ])
+    }
+  }
 }
 
 

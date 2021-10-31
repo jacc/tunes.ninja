@@ -37,4 +37,11 @@ export class LastFMAPI {
       plays: userResponse["track"]["userplaycount"],
     };
   }
+
+  public static async artist(artist: string): Promise<any> { // i am not type hinting this fucking object. you can guess, have fun LMFAO
+    const search = await fetch(
+        `https://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist=${artist}&api_key=${process.env.LASTFM_API}&format=json&limit=1`
+    );
+    return await search.json();
+  }
 }

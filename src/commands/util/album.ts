@@ -15,17 +15,25 @@ export const album: ChatCommand = {
       description: "name of album.",
       type: "STRING",
       required: true,
+      autocomplete: true
     },
   ],
   async run(interaction) {
     const options = new InteractionOptions(
       interaction.options.data as unknown as InteractionOptions[]
     );
-    const song = await SpotifyAPI.searchAlbum(options.get("query"));
-    console.log(song);
-    await returnLinks(
-      interaction,
-      `https://open.spotify.com/album/${song.split(":")[2]}`
-    );
+
+    if(options.get('query').includes("spotify:album")) {
+      await returnLinks(
+          interaction,
+          `https://open.spotify.com/album/${options.get('query').split(":")[2]}`
+      );
+    } else {
+      const song = await SpotifyAPI.searchAlbum(options.get("query"));
+      await returnLinks(
+          interaction,
+          `https://open.spotify.com/album/${song.split(":")[2]}`
+      );
+    }
   },
 };

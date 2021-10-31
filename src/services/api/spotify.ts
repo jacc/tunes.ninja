@@ -37,6 +37,19 @@ export class SpotifyAPI {
     return search.body.tracks.items[0].uri;
   }
 
+  public static async searchArtist(query: string): Promise<SpotifyApi.ArtistObjectFull> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    console.log(query)
+    const search = await spotifyApi.searchArtists(query, { limit: 1 });
+
+    if (!search.body.artists?.items.length) {
+      throw new UnknownSong();
+    }
+
+    return search.body.artists.items[0]
+  }
+
   public static async analyzeAudio(query: string): Promise<SpotifyApi.AudioAnalysisResponse> {
     const auth = await this.getAuthorization();
     await spotifyApi.setAccessToken(auth);
@@ -51,6 +64,22 @@ export class SpotifyAPI {
     const search = await spotifyApi.searchTracks(query, { limit: 24 });
 
     return search.body.tracks;
+  }
+
+  public static async searchArtists(query: string): Promise<any> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    const search = await spotifyApi.searchArtists(query, { limit: 24 });
+
+    return search.body.artists;
+  }
+
+  public static async searchAlbums(query: string): Promise<any> {
+    const auth = await this.getAuthorization();
+    await spotifyApi.setAccessToken(auth);
+    const search = await spotifyApi.searchAlbums(query, { limit: 24 });
+
+    return search.body.albums;
   }
 
   public static async topSongs(): Promise<any> {
