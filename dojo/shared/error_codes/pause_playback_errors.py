@@ -9,3 +9,7 @@ class UnableToPausePlaybackSpotify(ErrorMessage):
 class UnableToPausePlaybackAppleMusic(ErrorMessage):
     error_code: str = "apl_002"
     error_message: typing.Optional[str] = "Unable to pause playback on Apple Music."
+    
+error_codes = [
+    UnableToPausePlaybackAppleMusic, UnableToPausePlaybackSpotify
+]

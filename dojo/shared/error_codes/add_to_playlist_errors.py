@@ -10,3 +10,9 @@ class AppleMusicUnableToAddToPlaylists(ErrorMessage):
 class SpotifyUnableToAddToPlaylists(ErrorMessage):
     error_code = "spo_001"
     error_message = "Unable to add song to Spotify playlist."
+    
+    
+    
+error_codes = [
+    AppleMusicUnableToAddToPlaylists, SpotifyUnableToAddToPlaylists
+]

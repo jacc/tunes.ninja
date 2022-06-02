@@ -22,3 +22,8 @@ class RestApiMaintenance(ErrorMessage):
 class RestApiUnavailable(ErrorMessage):
     error_code = "rest_002"
     error_message = "This API is currently unavailable."
+    
+    
+error_codes = [
+    UnsupportedActionForService, ServiceMaintainance, ServiceUnavailable, RestApiMaintenance, RestApiUnavailable
+]
