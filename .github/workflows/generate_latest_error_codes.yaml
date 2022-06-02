@@ -1,11 +1,12 @@
 name: Generate Error Codes JSON
-on: 
+on:
   push:
-    paths: 
+    paths:
       - "dojo/shared/error_codes/*"
       - "dojo/shared/error_messages.py"
+    branches:
+      - "v3"
   workflow_dispatch:
-
 
 jobs:
   generate-file:
@@ -13,7 +14,7 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9"]
-      
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
