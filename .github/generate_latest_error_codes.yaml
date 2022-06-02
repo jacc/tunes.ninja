@@ -1,0 +1,37 @@
+name: Generate Error Codes JSON
+on: 
+  push:
+    paths: 
+      - "dojo/shared/error_codes/*"
+      - "dojo/shared/error_messages.py"
+  workflow_dispatch:
+
+
+jobs:
+  generate-file:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9"]
+      
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r dojo/requirements.txt
+      - name: Generate Error Codes
+        run: |
+          python dojo/_scripts/generate_error_codes.py --styling camel_case
+
+      - name: Add & Commit
+        uses: EndBug/add-and-commit@v9.0.0
+        with:
+          default_author: github-actions
+          add: error_codes.json
+          message: "chore(dev): generate latest error codes."
+          
