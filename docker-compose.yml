@@ -46,7 +46,7 @@ services:
       REDIS_URL: redis://redis
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
     ports:
-      - "5555"
+      - "5555:5555"
     expose:
       - "5555"
 

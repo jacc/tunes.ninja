@@ -144,3 +144,6 @@ samurai/node_modules
 error_codes.json
 samurai/.env.prod
 samurai/.env
+.env.prod
+dojo/.env.prod
+.env
