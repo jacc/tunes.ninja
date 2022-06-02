@@ -1,0 +1,56 @@
+[
+    {
+        "var": "appleMusicUnableToAddToPlaylists",
+        "error_code": "apl_001",
+        "error_message": "Unable to add song to Apple Music playlists",
+        "error_time": "2022-06-02T00:28:40.784113+00:00"
+    },
+    {
+        "var": "spotifyUnableToAddToPlaylists",
+        "error_code": "spo_001",
+        "error_message": "Unable to add song to Spotify playlist.",
+        "error_time": "2022-06-02T00:28:40.784228+00:00"
+    },
+    {
+        "var": "unsupportedActionForService",
+        "error_code": "unsp_001",
+        "error_message": "This action is not supported for this service.",
+        "error_time": "2022-06-02T00:28:40.784279+00:00"
+    },
+    {
+        "var": "serviceMaintainance",
+        "error_code": "serv_001",
+        "error_message": "This service is currently undergoing maintainance.",
+        "error_time": "2022-06-02T00:28:40.784320+00:00"
+    },
+    {
+        "var": "serviceUnavailable",
+        "error_code": "serv_002",
+        "error_message": "This service is currently unavailable.",
+        "error_time": "2022-06-02T00:28:40.784357+00:00"
+    },
+    {
+        "var": "restApiMaintenance",
+        "error_code": "rest_001",
+        "error_message": "This API is currently undergoing maintainance.",
+        "error_time": "2022-06-02T00:28:40.784393+00:00"
+    },
+    {
+        "var": "restApiUnavailable",
+        "error_code": "rest_002",
+        "error_message": "This API is currently unavailable.",
+        "error_time": "2022-06-02T00:28:40.784429+00:00"
+    },
+    {
+        "var": "unableToPausePlaybackAppleMusic",
+        "error_code": "apl_002",
+        "error_message": "Unable to pause playback on Apple Music.",
+        "error_time": "2022-06-02T00:28:40.784469+00:00"
+    },
+    {
+        "var": "unableToPausePlaybackSpotify",
+        "error_code": "spo_002",
+        "error_message": "Unable to pause playback on Spotify.",
+        "error_time": "2022-06-02T00:28:40.784504+00:00"
+    }
+]
