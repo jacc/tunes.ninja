@@ -18,6 +18,7 @@ model Guild {
     replyToAppleMusic Boolean    @default(true)
     replyToSoundcloud Boolean    @default(true)
     returnServices    Services[]
+    replyStyle        ReplyStyle @default(MINIMAL)
 }
 
 model User {
@@ -69,4 +70,9 @@ enum Services {
     TIDAL
     YOUTUBE
     YOUTUBE_MUSIC
+}
+
+enum ReplyStyle {
+    MINIMAL
+    DESCRIPTIVE
 }
