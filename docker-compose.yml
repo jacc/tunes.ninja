@@ -33,21 +33,22 @@ services:
     expose:
       - "80"
 
-  # dojo:
-  #   depends_on:
-  #     - redis
-  #     - postgres
-  #   build:
-  #     context: ./samurai
-  #     dockerfile: Dockerfile
-  #   restart: always
-  #   env_file: .env.prod
-  #   environment:
-  #     REDIS_URL: redis://redis
-  #     DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
-  #   command: yarn prod
-  #   expose:
-  #     - "80"
+  dojo:
+    depends_on:
+      - redis
+      - postgres
+    build:
+      context: ./dojo
+      dockerfile: Dockerfile
+    restart: always
+    env_file: .env.prod
+    environment:
+      REDIS_URL: redis://redis
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+    ports:
+      - "5555"
+    expose:
+      - "5555"
 
 volumes:
   redis_data:
