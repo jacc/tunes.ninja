@@ -109,25 +109,22 @@ client.on("messageCreate", async (message) => {
   let guildSettings = await wrapRedis(
     `settings:${message.guild!.id}`,
     () =>
-      prisma.guild.findFirst({
-        where: { id: message.guild!.id },
+      prisma.guild.upsert({
+        where: {
+          id: message.guild!.id,
+        },
+        update: {},
+        create: {
+          id: message.guild!.id,
+          returnServices: [
+            Services.SPOTIFY,
+            Services.APPLEMUSIC,
+            Services.SOUNDCLOUD,
+          ],
+        },
       }),
     6000
   );
-
-  if (!guildSettings) {
-    guildSettings = await prisma.guild.create({
-      data: {
-        id: message.guild!.id,
-        returnServices: [
-          Services.SPOTIFY,
-          Services.APPLEMUSIC,
-          Services.SOUNDCLOUD,
-        ],
-      },
-    });
-    signale.info(`Created guild settings for ${message.guild!.id}`);
-  }
 
   const url = linkSchema.safeParse(message.content);
   if (!url.success) return;
@@ -138,7 +135,6 @@ client.on("messageCreate", async (message) => {
     if (!guildSettings) return;
     const allowedToReply = await checkLinkPermission(song, guildSettings);
     if (!allowedToReply) return;
-
     await dispatchReply(message, song, guildSettings);
   });
 });

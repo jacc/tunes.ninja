@@ -34,8 +34,6 @@ export async function dispatchReply(
   const song = await SongsApi.getLinks(linkToSong);
   if (!song.links) return;
 
-  console.log(song);
-
   const servicesSettings = settings.returnServices;
   const filteredServices = Object.keys(song.links).filter((service) =>
     servicesSettings.includes(songMapping[service] as Services)
