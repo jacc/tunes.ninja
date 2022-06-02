@@ -6,12 +6,16 @@ services:
     platform: linux/x86_64
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: "rootpass"
+      MYSQL_DATABASE: "db"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "pass"
     ports:
       - "3306:3306"
     expose:
       - "3306"
-
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis

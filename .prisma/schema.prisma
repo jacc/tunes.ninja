@@ -2,16 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-    provider = "postgresql"
+    provider = "mysql"
     url      = env("DATABASE_URL")
 }
 
 generator jsclient {
     provider = "prisma-client-js"
-}
-
-generator pyclient {
-    provider = "prisma-client-py"
 }
 
 model User {
