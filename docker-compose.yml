@@ -1,21 +1,15 @@
 version: "3.9"
 
 services:
-  db:
-    image: mysql:8.0.28
-    platform: linux/x86_64
+  postgres:
+    image: postgres
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: "rootpass"
-      MYSQL_DATABASE: "db"
-      MYSQL_USER: "user"
-      MYSQL_PASSWORD: "pass"
-    ports:
-      - "3306:3306"
-    expose:
-      - "3306"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - "postgres_data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
 
   redis:
     image: redis
@@ -26,7 +20,7 @@ services:
   samurai:
     depends_on:
       - redis
-      - db
+      - postgres
     build:
       context: .
       dockerfile: Dockerfile
@@ -34,7 +28,7 @@ services:
     env_file: ./samurai/.env.prod
     environment:
       REDIS_URL: redis://redis
-      DATABASE_URL: mysql://db:3306/db
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
     command: yarn prod
     expose:
       - "80"
@@ -57,3 +51,4 @@ services:
 
 volumes:
   redis_data:
+  postgres_data:
