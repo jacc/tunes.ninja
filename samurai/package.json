@@ -13,7 +13,7 @@
     "services:down": "docker-compose -f docker-compose.dev.yml down",
     "services:start": "docker-compose -f docker-compose.dev.yml start",
     "services:stop": "docker-compose -f docker-compose.dev.yml stop",
-    "migrate": "prisma migrate dev",
+    "migrate": "prisma migrate dev --schema ../prisma/schema.prisma",
     "migrate:deploy": "prisma migrate deploy --schema .prisma/schema.prisma",
     "up:prod": "docker-compose up --build -d",
     "down:prod": "docker-compose down",
@@ -28,10 +28,8 @@
     "dotenv": "^10.0.0",
     "graphql": "^16.3.0",
     "graphql-request": "^4.0.0",
-    "install": "^0.13.0",
     "ioredis": "^4.28.0",
     "mytls": "^1.0.5",
-    "node-fetch": "^2.6.6",
     "node-schedule": "^2.0.0",
     "prisma": "^3.4.2",
     "signale": "^1.4.0",
@@ -41,6 +39,10 @@
   },
   "devDependencies": {
     "@types/ioredis": "^4.28.1",
-    "@types/signale": "^1.4.2"
+    "@types/node-fetch": "^2.6.1",
+    "@types/signale": "^1.4.2",
+    "install": "^0.13.0",
+    "node-fetch": "^2.6.6",
+    "npm": "^8.12.1"
   }
 }

@@ -12,11 +12,21 @@ generator jsclient {
 
 }
 
+model Guild {
+    id                String     @id
+    replyToSpotify    Boolean    @default(true)
+    replyToAppleMusic Boolean    @default(true)
+    replyToSoundcloud Boolean    @default(true)
+    returnServices    Services[]
+}
+
 model User {
     id         String      @id
+    searches   Int         @default(0)
     Spotify    Spotify?
     AppleMusic AppleMusic?
     LastFm     LastFm?
+    flags      Flags[]
 }
 
 model Spotify {
@@ -42,4 +52,21 @@ model LastFm {
     user     User    @relation(fields: [userId], references: [id])
     userId   String  @unique
     username String?
+}
+
+enum Flags {
+    FRIEND
+    BANNED
+    DONATOR
+    CONTRIBUTOR
+    OWNER
+}
+
+enum Services {
+    SPOTIFY
+    APPLEMUSIC
+    SOUNDCLOUD
+    TIDAL
+    YOUTUBE
+    YOUTUBE_MUSIC
 }

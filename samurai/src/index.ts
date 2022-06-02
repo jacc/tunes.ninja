@@ -1,17 +1,33 @@
 import "dotenv/config";
 
-import { ActivityType, Client, GatewayIntentBits } from "discord.js";
+import {
+  ActivityType,
+  APIMessageComponentEmoji,
+  ButtonStyle,
+  Client,
+  Guild,
+  IntentsBitField,
+} from "discord.js";
 import {
   chatCommandsMap,
   messageCommandsMap,
   userCommandsMap,
 } from "./commands";
 import { prisma } from "./services/prisma";
-import { redis } from "./services/redis";
+import { redis, wrapRedis } from "./services/redis";
 import { isDev } from "./constants";
 import { handleInteraction } from "./services/events/interaction";
 import signale from "signale";
 import * as z from "zod";
+import {
+  Flags,
+  Guild as PrismaGuild,
+  Prisma,
+  Services,
+} from "../prisma-client-js";
+import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
+import { dispatchReply } from "./services/dispatch";
+const myIntents = new IntentsBitField("Guilds");
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -22,9 +38,23 @@ const linkSchema = z.string().refine((x) => {
   );
 }, "");
 
+async function checkLinkPermission(
+  link: string,
+  settings: PrismaGuild
+): Promise<boolean> {
+  if (link.includes("spotify")) {
+    return settings.replyToSpotify;
+  } else if (link.includes("apple")) {
+    return settings.replyToAppleMusic;
+  } else if (link.includes("soundcloud")) {
+    return settings.replyToSoundcloud;
+  } else {
+    return false;
+  }
+}
+
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
-  allowedMentions: { parse: ["users", "roles"], repliedUser: false },
+  intents: ["Guilds", "GuildMessages", "MessageContent"],
 });
 
 client.on("ready", async () => {
@@ -73,12 +103,44 @@ client.on("ready", async () => {
   }
 });
 
-client.on("message", async (message) => {
-  console.log(message);
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
+  let guildSettings = await wrapRedis(
+    `settings:${message.guild!.id}`,
+    () =>
+      prisma.guild.findFirst({
+        where: { id: message.guild!.id },
+      }),
+    6000
+  );
+
+  if (!guildSettings) {
+    guildSettings = await prisma.guild.create({
+      data: {
+        id: message.guild!.id,
+        returnServices: [
+          Services.SPOTIFY,
+          Services.APPLEMUSIC,
+          Services.SOUNDCLOUD,
+        ],
+      },
+    });
+    signale.info(`Created guild settings for ${message.guild!.id}`);
+  }
+
   const url = linkSchema.safeParse(message.content);
-  console.log(url);
+  if (!url.success) return;
+
+  const matches = url.data.match(/((\w+:\/\/\S+)|(\w+[\.:]\w+\S+))[^\s,\.]/gi);
+
+  matches?.map(async (song: string) => {
+    if (!guildSettings) return;
+    const allowedToReply = await checkLinkPermission(song, guildSettings);
+    if (!allowedToReply) return;
+
+    await dispatchReply(message, song, guildSettings);
+  });
 });
 
 client.on("interactionCreate", handleInteraction);
