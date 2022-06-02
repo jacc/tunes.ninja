@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - "postgres_data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+
+  redis:
+    image: redis
+    restart: always
+    volumes:
+      - "redis_data:/redis/data"
+
+  samurai:
+    depends_on:
+      - redis
+      - postgres
+    build:
+      context: ./samurai
+      dockerfile: Dockerfile
+    restart: always
+    env_file: .env.prod
+    environment:
+      REDIS_URL: redis://redis
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+    command: yarn prod
+    expose:
+      - "80"
+
+  # dojo:
+  #   depends_on:
+  #     - redis
+  #     - postgres
+  #   build:
+  #     context: ./samurai
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   env_file: .env.prod
+  #   environment:
+  #     REDIS_URL: redis://redis
+  #     DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
+  #   command: yarn prod
+  #   expose:
+  #     - "80"
+
+volumes:
+  redis_data:
+  postgres_data:
