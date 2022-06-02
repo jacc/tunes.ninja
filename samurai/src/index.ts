@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { Client, Intents } from "discord.js";
+import { ActivityType, Client, GatewayIntentBits } from "discord.js";
 import {
   chatCommandsMap,
   messageCommandsMap,
@@ -11,10 +11,19 @@ import { redis } from "./services/redis";
 import { isDev } from "./constants";
 import { handleInteraction } from "./services/events/interaction";
 import signale from "signale";
-const myIntents = new Intents();
+import * as z from "zod";
+
+const linkSchema = z.string().refine((x) => {
+  return (
+    x.includes("open.spotify.com/track") ||
+    x.includes("open.spotify.com/album") ||
+    x.includes("music.apple.com") ||
+    x.includes("soundcloud.com")
+  );
+}, "");
 
 const client = new Client({
-  intents: myIntents,
+  intents: [GatewayIntentBits.Guilds],
   allowedMentions: { parse: ["users", "roles"], repliedUser: false },
 });
 
@@ -26,7 +35,7 @@ client.on("ready", async () => {
     status: "online",
     activities: [
       {
-        type: "WATCHING",
+        type: ActivityType.Watching,
         name: `github.com/jacc`,
       },
     ],
@@ -62,6 +71,14 @@ client.on("ready", async () => {
       ...userCommandsMap.values(),
     ]);
   }
+});
+
+client.on("message", async (message) => {
+  console.log(message);
+  if (message.author.bot) return;
+
+  const url = linkSchema.safeParse(message.content);
+  console.log(url);
 });
 
 client.on("interactionCreate", handleInteraction);

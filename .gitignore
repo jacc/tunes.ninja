@@ -147,3 +147,7 @@ samurai/.env
 .env.prod
 dojo/.env.prod
 .env
+samurai/prisma-client-js
+node_modules
+yarn.lock
+samurai/yarn.lock

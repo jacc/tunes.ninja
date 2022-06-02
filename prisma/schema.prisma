@@ -8,6 +8,8 @@ datasource db {
 
 generator jsclient {
     provider = "prisma-client-js"
+    output   = "../samurai/prisma-client-js"
+
 }
 
 model User {

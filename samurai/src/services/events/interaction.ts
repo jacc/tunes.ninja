@@ -1,11 +1,13 @@
 import {
+  ButtonBuilder,
+  ButtonInteraction,
+  ButtonStyle,
   CommandInteraction,
-  ContextMenuInteraction,
+  ContextMenuCommandInteraction,
   DiscordAPIError,
+  Embed,
   GuildMember,
   Interaction,
-  MessageActionRow,
-  MessageSelectMenu,
   SelectMenuInteraction,
 } from "discord.js";
 import {
@@ -13,23 +15,40 @@ import {
   messageCommandsMap,
   userCommandsMap,
 } from "../../commands";
-import { StandardEmbed } from "../../structs/standard-embed";
+
+import * as crypto from "crypto";
+import { redis } from "../redis";
+import { prisma } from "../prisma";
+import { ActionRowBuilder, EmbedBuilder } from "@discordjs/builders";
 
 export async function handleInteraction(
   interaction: Interaction
 ): Promise<void> {
-  if (interaction.isContextMenu())
-    return await handleContextInteraction(interaction);
-  if (interaction.isCommand())
-    return await handleMessageInteraction(interaction);
+  try {
+    if (interaction.isContextMenuCommand())
+      return await handleContextInteraction(interaction);
+    if (interaction.isCommand())
+      return await handleMessageInteraction(interaction);
+    if (interaction.isButton())
+      return await handleButtonInteraction(interaction);
+  } catch (e: any) {
+    console.error(e);
+    interaction.channel?.send({
+      embeds: [
+        new EmbedBuilder()
+          .setDescription(`\`\`\`${e.message}\n${e.stack}\`\`\``)
+          .setTitle("Debug Error"),
+      ],
+    });
+  }
 }
 
 export async function handleContextInteraction(
-  interaction: ContextMenuInteraction
+  interaction: ContextMenuCommandInteraction
 ): Promise<void> {
   let command;
 
-  switch (interaction.targetType) {
+  switch (interaction.targetId) {
     case "USER":
       command = userCommandsMap.get(interaction.commandName);
       break;
@@ -59,19 +78,13 @@ export async function handleContextInteraction(
           if (!interaction.deferred) {
             await interaction.reply({
               ephemeral: true,
-              embeds: [
-                new StandardEmbed(
-                  interaction.member as GuildMember
-                ).setDescription(`⚠ ${e.message}`),
-              ],
+              embeds: [new EmbedBuilder().setDescription(`⚠ ${e.message}`)],
+              components: [],
             });
           } else {
             await interaction.editReply({
-              embeds: [
-                new StandardEmbed(
-                  interaction.member as GuildMember
-                ).setDescription(`⚠ ${e.message}`),
-              ],
+              embeds: [new EmbedBuilder().setDescription(`⚠ ${e.message}`)],
+              components: [],
             });
           }
         } catch (error) {
@@ -107,24 +120,27 @@ export async function handleMessageInteraction(
           if (!interaction.deferred) {
             await interaction.reply({
               ephemeral: true,
-              embeds: [
-                new StandardEmbed(
-                  interaction.member as GuildMember
-                ).setDescription(`⚠ ${e.message}`),
-              ],
+              embeds: [new EmbedBuilder().setDescription(`⚠ ${e.message}`)],
+              components: [],
             });
           } else {
             await interaction.editReply({
-              embeds: [
-                new StandardEmbed(
-                  interaction.member as GuildMember
-                ).setDescription(`⚠ ${e.message}`),
-              ],
+              embeds: [new EmbedBuilder().setDescription(`⚠ ${e.message}`)],
+              components: [],
             });
           }
-        } catch (error) {
+        } catch (error: any) {
+          await interaction.channel?.send({
+            embeds: [
+              new EmbedBuilder().setDescription(`⚠ ${e.message}`),
+              new EmbedBuilder().setDescription(`⚠ ${error.message}`),
+            ],
+            components: [],
+          });
           console.log(error);
         }
     }
   }
 }
+
+export async function handleButtonInteraction(interaction: ButtonInteraction) {}

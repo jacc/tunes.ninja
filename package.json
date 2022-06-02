@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "@prisma/client": "^3.14.0",
+    "cross-env": "^7.0.3",
+    "prisma": "^3.14.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.7.2",
+    "zod": "^3.17.3"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child samurai/src/index.ts",
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=production node .",
+    "generate": "prisma generate --schema .prisma/schema.prisma",
+    "lint": "eslint .",
+    "services:up": "docker-compose -f docker-compose.dev.yml up -d&&yarn migrate --schema .prisma/schema.prisma",
+    "services:down": "docker-compose -f docker-compose.dev.yml down",
+    "services:start": "docker-compose -f docker-compose.dev.yml start",
+    "services:stop": "docker-compose -f docker-compose.dev.yml stop",
+    "migrate": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "up:prod": "docker-compose up --build -d",
+    "down:prod": "docker-compose down",
+    "prod": "yarn migrate:deploy && yarn start"
+  }
+}
