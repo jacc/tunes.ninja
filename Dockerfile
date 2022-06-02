@@ -1,6 +1,7 @@
 FROM node:latest
 WORKDIR /app
-ADD . .
+ADD samurai/ .
+ADD .prisma ./.prisma/
 RUN yarn
 RUN yarn generate
 RUN yarn build

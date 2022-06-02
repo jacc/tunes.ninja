@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child src/index.ts",
     "build": "tsc",
     "start": "cross-env NODE_ENV=production node ./dist",
-    "generate": "prisma generate --schema prisma/schema.prisma",
+    "generate": "prisma generate --schema .prisma/schema.prisma",
     "lint": "eslint .",
     "services:up": "docker-compose -f docker-compose.dev.yml up -d&&yarn migrate",
     "services:down": "docker-compose -f docker-compose.dev.yml down",
