@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator jsclient {
+    provider = "prisma-client-js"
+}
+
+generator pyclient {
+    provider = "prisma-client-py"
+}
+
+model User {
+    id         String      @id
+    Spotify    Spotify?
+    AppleMusic AppleMusic?
+    LastFm     LastFm?
+}
+
+model Spotify {
+    id            String    @id
+    user          User      @relation(fields: [userId], references: [id])
+    userId        String    @unique
+    access_token  String?
+    refresh_token String?
+    expires_at    DateTime?
+    scopes        String
+}
+
+model AppleMusic {
+    id                    String    @id
+    user                  User      @relation(fields: [userId], references: [id])
+    userId                String    @unique
+    personal_access_token String?
+    expires_at            DateTime?
+}
+
+model LastFm {
+    id       String  @id
+    user     User    @relation(fields: [userId], references: [id])
+    userId   String  @unique
+    username String?
+}
