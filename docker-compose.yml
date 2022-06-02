@@ -1,15 +1,19 @@
-version: "3"
+version: "3.9"
 
 services:
-  postgres:
-    image: postgres
+  db:
+    image: mysql:8.0.28
+    platform: linux/x86_64
     restart: always
-    volumes:
-      - "postgres_data:/var/lib/postgresql/data"
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      MYSQL_ROOT_PASSWORD: "password"
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - /miranda/mysql:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
     image: redis
@@ -20,12 +24,12 @@ services:
   samurai:
     depends_on:
       - redis
-      - postgres
+      - db
     build:
       context: ./samurai
       dockerfile: Dockerfile
     restart: always
-    env_file: .env.prod
+    env_file: ./samurai/.env.prod
     environment:
       REDIS_URL: redis://redis
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres
@@ -51,4 +55,3 @@ services:
 
 volumes:
   redis_data:
-  postgres_data:

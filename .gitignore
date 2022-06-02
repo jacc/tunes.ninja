@@ -137,8 +137,10 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-josh_keys.yaml
-testing.py
-docker-compose.yaml
-.gitignore
 
+samurai/node_modules
+.vscode
+.idea
+error_codes.json
+samurai/.env.prod
+samurai/.env
