@@ -1,4 +1,5 @@
 from fastapi import Response
+from odmantic import Field
 from pydantic import BaseModel
 from pydantic.main import ModelMetaclass
 from starlette.background import BackgroundTask
@@ -61,3 +62,9 @@ class PredefinedModelResponse(Response):
                 "separators": (",", ":"),
             }
         ).encode("utf-8")
+
+
+
+class BackgroundProcessResponse(BaseModel):
+    uid: str
+    process_name: str
