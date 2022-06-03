@@ -14,10 +14,6 @@ from pyfy import AsyncSpotify
 router = APIRouter(prefix="/spotify")
 
 
-class Discord(BaseModel):
-    discordId: str
-
-
 @router.get("/view", response_model=PlaylistsForUser)
 async def view_playlist_under_spotify(
     fetch_discord_information: AsyncSpotify = Depends(
