@@ -3,9 +3,13 @@ from fastapi import Body, Depends, HTTPException, Path, Query
 from loguru import logger
 import typing
 
+from dojo.databases.user_credentials import UserServiceCredentials
+
 
 async def main_function_return_discord_id(discord_id: str):
-    logger.info(f"Fetching discord information for user {discord_id}")
+    return await return_odmantic_mongo().find_one(
+        UserServiceCredentials, {"discord_user_id": discord_id}
+    )
 
 
 async def fetch_discord_id_from_path_parameter(
