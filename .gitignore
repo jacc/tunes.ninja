@@ -151,3 +151,6 @@ samurai/prisma-client-js
 node_modules
 yarn.lock
 samurai/yarn.lock
+.env.dev
+test_*.py
+.dojo-dev-mode
