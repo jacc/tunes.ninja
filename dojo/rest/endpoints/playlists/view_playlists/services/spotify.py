@@ -16,11 +16,11 @@ router = APIRouter(prefix="/spotify")
 
 @router.get("/view", response_model=PlaylistsForUser)
 async def view_playlist_under_spotify(
-    fetch_discord_information: AsyncSpotify = Depends(
+    fetch_spotify_client_for_discord_user: AsyncSpotify = Depends(
         fetch_user_spotify_client_from_query_parameter
     ),
 ):
-    _fetch_playlists = await fetch_discord_information.user_playlists(limit=10)
+    _fetch_playlists = await fetch_spotify_client_for_discord_user.user_playlists(limit=10)
     return PlaylistsForUser(
         playlists=[
             Playlist(
