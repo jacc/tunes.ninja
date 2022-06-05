@@ -1,4 +1,7 @@
 from fastapi import Depends, HTTPException
+from dojo.shared.error_codes.account_related import SpotifyAccountNotLinked
+
+from dojo.shared.response import PreinitErrorMessage
 from .fetch_user_credentials_on_discord_id import (
     fetch_discord_id_from_incoming_body,
     fetch_discord_id_from_path_parameter,
@@ -14,7 +17,9 @@ from pyfy import AsyncSpotify, UserCreds
 
 async def main_generator(user_creds: UserServiceCredentials):
     if user_creds is None:
-        return False
+        raise PreinitErrorMessage(
+            model=SpotifyAccountNotLinked, status_code=404
+        )
     
     return AsyncSpotify(
             client_creds=return_tunesninja_client_creds(),
