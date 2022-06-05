@@ -9,18 +9,23 @@ if typing.TYPE_CHECKING:
     from pyfy import Spotify
 
 @background.task(base=MongoSpotifyClient)
-def play_song_under_spotify_account(discord_id: str, spotify_track_id: str):
+def play_song_under_spotify_account(discord_id: str, spotify_track_id: str, queue: bool = False):
     
     _create_client = play_song_under_spotify_account.return_credentials_for_user(
         discord_user_id=discord_id, generate_client=True
     ) # type: Spotify
     
     try:
-        _create_client.play(spotify_track_id)
+        if queue:
+            _create_client.queue(track_id=spotify_track_id)
+        else:
+            _create_client.play(spotify_track_id)
         logger.debug(f"Playing song {spotify_track_id} under Spotify account for discord user: {discord_id}.")
     except Exception as e:
         logger.exception("Unable to play song under Spotify account.")
         
+        
+
 @background.task(base=MongoSpotifyClient)
 def pause_song_under_spotify_account(discord_id: str):
     
