@@ -22,37 +22,9 @@ model Guild {
 }
 
 model User {
-    id         String      @id
-    searches   Int         @default(0)
-    Spotify    Spotify?
-    AppleMusic AppleMusic?
-    LastFm     LastFm?
-    flags      Flags[]
-}
-
-model Spotify {
-    id            String    @id
-    user          User      @relation(fields: [userId], references: [id])
-    userId        String    @unique
-    access_token  String?
-    refresh_token String?
-    expires_at    DateTime?
-    scopes        String
-}
-
-model AppleMusic {
-    id                    String    @id
-    user                  User      @relation(fields: [userId], references: [id])
-    userId                String    @unique
-    personal_access_token String?
-    expires_at            DateTime?
-}
-
-model LastFm {
     id       String  @id
-    user     User    @relation(fields: [userId], references: [id])
-    userId   String  @unique
-    username String?
+    searches Int     @default(0)
+    flags    Flags[]
 }
 
 enum Flags {

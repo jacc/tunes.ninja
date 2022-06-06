@@ -1,4 +1,8 @@
-import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  EmbedBuilder,
+} from "@discordjs/builders";
 import {
   ActionRow,
   APIInteractionGuildMember,
@@ -11,13 +15,16 @@ import {
   User,
 } from "discord.js";
 import { Service } from "ts-node";
-import { Guild, Services } from "../../prisma-client-js";
+import { prisma } from "./prisma";
+import { Guild, ReplyStyle, Services } from "../../prisma-client-js";
 import { SongsApi } from "./api/links";
+import { wrapRedis } from "./redis";
 
 export async function dispatchReply(
   message: Message | CommandInteraction | ContextMenuCommandInteraction,
   linkToSong: string,
   settings: Guild,
+  forceDescriptive?: boolean,
   plays?: number
 ): Promise<void> {
   let author: User | GuildMember | APIInteractionGuildMember | null;
@@ -69,7 +76,18 @@ export async function dispatchReply(
     return buttonRow;
   });
 
+  const embed = new EmbedBuilder()
+    .setAuthor({
+      name: `${song.title} by ${song.artist}`,
+      iconURL: `${song.thumbnail}`,
+    })
+    .setColor(0x2f3136);
+
   await message.reply({
+    embeds:
+      settings.replyStyle === ReplyStyle.DESCRIPTIVE || forceDescriptive
+        ? [embed]
+        : [],
     components: rows,
   });
 }
