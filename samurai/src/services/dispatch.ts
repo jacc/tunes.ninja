@@ -96,6 +96,7 @@ export async function dispatchReply(
         ? [embed]
         : [],
     components: rows,
+    allowedMentions: { repliedUser: false },
   });
   console.timeEnd("sending reply");
 }
