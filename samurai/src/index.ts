@@ -27,6 +27,10 @@ import {
 } from "../prisma-client-js";
 import { ActionRowBuilder, ButtonBuilder } from "@discordjs/builders";
 import { dispatchReply } from "./services/dispatch";
+import {
+  checkLinkPermission,
+  returnGuildSettings,
+} from "./services/helpers/utility";
 const myIntents = new IntentsBitField("Guilds");
 
 const linkSchema = z.string().refine((x) => {
@@ -37,21 +41,6 @@ const linkSchema = z.string().refine((x) => {
     x.includes("soundcloud.com")
   );
 }, "");
-
-async function checkLinkPermission(
-  link: string,
-  settings: PrismaGuild
-): Promise<boolean> {
-  if (link.includes("spotify")) {
-    return settings.replyToSpotify;
-  } else if (link.includes("apple")) {
-    return settings.replyToAppleMusic;
-  } else if (link.includes("soundcloud")) {
-    return settings.replyToSoundcloud;
-  } else {
-    return false;
-  }
-}
 
 const client = new Client({
   intents: ["Guilds", "GuildMessages", "MessageContent"],
@@ -105,26 +94,11 @@ client.on("ready", async () => {
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+  if (!message.guild) return; // TODO: eventually handle direct messages, but for now we'll omit
 
-  let guildSettings = await wrapRedis(
-    `settings:${message.guild!.id}`,
-    () =>
-      prisma.guild.upsert({
-        where: {
-          id: message.guild!.id,
-        },
-        update: {},
-        create: {
-          id: message.guild!.id,
-          returnServices: [
-            Services.SPOTIFY,
-            Services.APPLEMUSIC,
-            Services.SOUNDCLOUD,
-          ],
-        },
-      }),
-    6000
-  );
+  console.time("get guild settings");
+  let guildSettings = await returnGuildSettings(message.guild.id);
+  console.timeEnd("get guild settings");
 
   const url = linkSchema.safeParse(message.content);
   if (!url.success) return;
@@ -133,7 +107,9 @@ client.on("messageCreate", async (message) => {
 
   matches?.map(async (song: string) => {
     if (!guildSettings) return;
+    console.time("check link permission");
     const allowedToReply = await checkLinkPermission(song, guildSettings);
+    console.timeEnd("check link permission");
     if (!allowedToReply) return;
     await dispatchReply(message, song, guildSettings);
   });

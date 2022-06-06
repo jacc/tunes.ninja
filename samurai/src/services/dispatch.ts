@@ -38,8 +38,11 @@ export async function dispatchReply(
     author = message.member;
   }
 
+  console.time("getting song");
   const song = await SongsApi.getLinks(linkToSong);
+  console.log(song);
   if (!song.links) return;
+  console.timeEnd("getting song");
 
   const servicesSettings = settings.returnServices;
   const filteredServices = Object.keys(song.links).filter((service) =>
@@ -63,9 +66,11 @@ export async function dispatchReply(
     );
   }
 
+  console.time("building embed");
   const rows = group.map((chunks) => {
     const buttonRow = new ActionRowBuilder<ButtonBuilder>();
     chunks.map((chunk) => {
+      if (!chunk[1]) return;
       return buttonRow.addComponents([
         new ButtonBuilder()
           .setStyle(ButtonStyle.Link)
@@ -82,7 +87,9 @@ export async function dispatchReply(
       iconURL: `${song.thumbnail}`,
     })
     .setColor(0x2f3136);
+  console.timeEnd("building embed");
 
+  console.time("sending reply");
   await message.reply({
     embeds:
       settings.replyStyle === ReplyStyle.DESCRIPTIVE || forceDescriptive
@@ -90,6 +97,7 @@ export async function dispatchReply(
         : [],
     components: rows,
   });
+  console.timeEnd("sending reply");
 }
 
 const filterMapping: Record<string, string> = {
