@@ -3,120 +3,138 @@
         "var": "appleMusicUnableToAddToPlaylists",
         "error_code": "apl_001",
         "error_message": "Unable to add song to Apple Music playlists",
-        "error_time": "2022-06-05T20:41:07.565267+00:00"
+        "error_time": "2022-06-16T02:30:16.268667+00:00"
     },
     {
         "var": "spotifyUnableToAddToPlaylists",
         "error_code": "spo_001",
         "error_message": "Unable to add song to Spotify playlist.",
-        "error_time": "2022-06-05T20:41:07.565369+00:00"
+        "error_time": "2022-06-16T02:30:16.268806+00:00"
     },
     {
         "var": "unsupportedActionForService",
         "error_code": "unsp_001",
         "error_message": "This action is not supported for this service.",
-        "error_time": "2022-06-05T20:41:07.565420+00:00"
+        "error_time": "2022-06-16T02:30:16.268862+00:00"
     },
     {
         "var": "serviceMaintainance",
         "error_code": "serv_001",
         "error_message": "This service is currently undergoing maintainance.",
-        "error_time": "2022-06-05T20:41:07.565459+00:00"
+        "error_time": "2022-06-16T02:30:16.268903+00:00"
     },
     {
         "var": "serviceUnavailable",
         "error_code": "serv_002",
         "error_message": "This service is currently unavailable.",
-        "error_time": "2022-06-05T20:41:07.565496+00:00"
+        "error_time": "2022-06-16T02:30:16.268940+00:00"
     },
     {
         "var": "restApiMaintenance",
         "error_code": "rest_001",
         "error_message": "This API is currently undergoing maintainance.",
-        "error_time": "2022-06-05T20:41:07.565532+00:00"
+        "error_time": "2022-06-16T02:30:16.268981+00:00"
     },
     {
         "var": "restApiUnavailable",
         "error_code": "rest_002",
         "error_message": "This API is currently unavailable.",
-        "error_time": "2022-06-05T20:41:07.565574+00:00"
+        "error_time": "2022-06-16T02:30:16.269018+00:00"
     },
     {
         "var": "restApiDisabled",
         "error_code": "rest_003",
         "error_message": "This API is currently disabled.",
-        "error_time": "2022-06-05T20:41:07.565609+00:00"
+        "error_time": "2022-06-16T02:30:16.269053+00:00"
     },
     {
         "var": "serviceLevelError",
         "error_code": "serv_003",
         "error_message": "Our service is unable to process your request. Please try again later.",
-        "error_time": "2022-06-05T20:41:07.565643+00:00"
+        "error_time": "2022-06-16T02:30:16.269087+00:00"
     },
     {
         "var": "unableToPausePlaybackAppleMusic",
         "error_code": "apl_002",
         "error_message": "Unable to pause playback on Apple Music.",
-        "error_time": "2022-06-05T20:41:07.565678+00:00"
+        "error_time": "2022-06-16T02:30:16.269122+00:00"
     },
     {
         "var": "unableToPausePlaybackSpotify",
         "error_code": "spo_002",
         "error_message": "Unable to pause playback on Spotify.",
-        "error_time": "2022-06-05T20:41:07.565712+00:00"
+        "error_time": "2022-06-16T02:30:16.269156+00:00"
     },
     {
         "var": "unableToCreatePlaylistErrorGenericSpotify",
         "error_code": "spcu_001",
         "error_message": "There was a problem with Spotify when creating this playlist.",
-        "error_time": "2022-06-05T20:41:07.565746+00:00"
+        "error_time": "2022-06-16T02:30:16.269190+00:00"
     },
     {
         "var": "unableToCreatePlaylistUnauthorizedSpotify",
         "error_code": "spcu_002",
         "error_message": "Spotify has responded that you do not have permission to create this playlist.",
-        "error_time": "2022-06-05T20:41:07.565779+00:00"
+        "error_time": "2022-06-16T02:30:16.269223+00:00"
     },
     {
         "var": "unableToCreatePlaylistErrorGenericAppleMusic",
         "error_code": "amcu_001",
         "error_message": "There was a problem with Apple Music when creating this playlist.",
-        "error_time": "2022-06-05T20:41:07.565812+00:00"
+        "error_time": "2022-06-16T02:30:16.269258+00:00"
     },
     {
         "var": "unableToCreatePlaylistUnauthorizedAppleMusic",
         "error_code": "amcu_002",
         "error_message": "Apple Music has responded that you do not have permission to create this playlist.",
-        "error_time": "2022-06-05T20:41:07.565844+00:00"
+        "error_time": "2022-06-16T02:30:16.269291+00:00"
     },
     {
         "var": "unableToLinkSpotifyPlaylistToDiscordChannel",
         "error_code": "spld_001",
         "error_message": "There was a problem linking this playlist to the Discord Channel.",
-        "error_time": "2022-06-05T20:41:07.565877+00:00"
+        "error_time": "2022-06-16T02:30:16.269324+00:00"
     },
     {
         "var": "unableToLinkAppleMusicPlaylistToDiscordChannel",
         "error_code": "amld_001",
         "error_message": "There was a problem linking this playlist to the Discord Channel.",
-        "error_time": "2022-06-05T20:41:07.565910+00:00"
+        "error_time": "2022-06-16T02:30:16.269358+00:00"
     },
     {
         "var": "noServicesLinked",
         "error_code": "glbl_un001",
         "error_message": "No services are linked to this account.",
-        "error_time": "2022-06-05T20:41:07.565943+00:00"
+        "error_time": "2022-06-16T02:30:16.269392+00:00"
     },
     {
         "var": "spotifyAccountNotLinked",
         "error_code": "spt_unl001",
         "error_message": "This user does not have a Spotify account linked.",
-        "error_time": "2022-06-05T20:41:07.565979+00:00"
+        "error_time": "2022-06-16T02:30:16.269426+00:00"
+    },
+    {
+        "var": "appleMusicAccountNotLinked",
+        "error_code": "apl_unl001",
+        "error_message": "This user does not have an Apple Music account linked.",
+        "error_time": "2022-06-16T02:30:16.269464+00:00"
+    },
+    {
+        "var": "unableToFetchPlaybackHistorySpotify",
+        "error_code": "spt_ffh1",
+        "error_message": "Unable to fetch playback history on this account.",
+        "error_time": "2022-06-16T02:30:16.269497+00:00"
+    },
+    {
+        "var": "unableToFetchCurrentlyPlayingSpotifyTrack",
+        "error_code": "spt_ffs1",
+        "error_message": "Unable to detect currently playing track on this account. Is this account actively playing a track?",
+        "error_time": "2022-06-16T02:30:16.269532+00:00"
     },
     {
         "var": "unableToPlayTrackSpotifyUser",
         "error_code": "spt_upt001",
         "error_message": "There was a problem playing the track on this user.",
-        "error_time": "2022-06-05T20:41:07.566013+00:00"
+        "error_time": "2022-06-16T02:30:16.269566+00:00"
     }
 ]
