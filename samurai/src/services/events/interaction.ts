@@ -1,25 +1,13 @@
 import {
-  ButtonBuilder,
   ButtonInteraction,
   ButtonStyle,
   CommandInteraction,
   ContextMenuCommandInteraction,
   DiscordAPIError,
-  Embed,
-  GuildMember,
   Interaction,
-  SelectMenuInteraction,
 } from "discord.js";
-import {
-  chatCommandsMap,
-  messageCommandsMap,
-  userCommandsMap,
-} from "../../commands";
-
-import * as crypto from "crypto";
-import { redis } from "../redis";
-import { prisma } from "../prisma";
-import { ActionRowBuilder, EmbedBuilder } from "@discordjs/builders";
+import {chatCommandsMap, messageCommandsMap, userCommandsMap,} from "../../commands";
+import {EmbedBuilder} from "@discordjs/builders";
 
 export async function handleInteraction(
   interaction: Interaction

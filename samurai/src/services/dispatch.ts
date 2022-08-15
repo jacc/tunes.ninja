@@ -16,14 +16,14 @@ import {
 } from "discord.js";
 import { Service } from "ts-node";
 import { prisma } from "./prisma";
-import { Guild, ReplyStyle, Services } from "../../prisma-client-js";
+import { Guild as GuildSettings, ReplyStyle, Services } from "../../prisma-client-js";
 import { SongsApi } from "./api/links";
 import { wrapRedis } from "./redis";
 
 export async function dispatchReply(
   message: Message | CommandInteraction | ContextMenuCommandInteraction,
   linkToSong: string,
-  settings: Guild,
+  settings: GuildSettings,
   forceDescriptive?: boolean,
   plays?: number
 ): Promise<void> {

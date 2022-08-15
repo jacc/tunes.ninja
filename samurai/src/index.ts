@@ -7,6 +7,7 @@ import {
   Client,
   Guild,
   IntentsBitField,
+  Message,
 } from "discord.js";
 import {
   chatCommandsMap,
@@ -31,6 +32,7 @@ import {
   checkLinkPermission,
   returnGuildSettings,
 } from "./services/helpers/utility";
+import { importFmbot } from "./services/helpers/fmbot";
 const myIntents = new IntentsBitField("Guilds");
 
 const linkSchema = z.string().refine((x) => {
@@ -43,7 +45,13 @@ const linkSchema = z.string().refine((x) => {
 }, "");
 
 const client = new Client({
-  intents: ["Guilds", "GuildMessages", "MessageContent"],
+  intents: [
+    "Guilds",
+    "GuildMessages",
+    "MessageContent",
+    "GuildMembers",
+    "GuildPresences",
+  ],
 });
 
 client.on("ready", async () => {
@@ -93,6 +101,7 @@ client.on("ready", async () => {
 });
 
 client.on("messageCreate", async (message) => {
+  // if (message.author.id === "356268235697553409") return importFmbot(message);
   if (message.author.bot) return;
   if (!message.guild) return; // TODO: eventually handle direct messages, but for now we'll omit
 
@@ -114,6 +123,10 @@ client.on("messageCreate", async (message) => {
     await dispatchReply(message, song, guildSettings);
   });
 });
+
+// client.on("messageUpdate", async (o, n) => {
+//   if (n.author?.id === "356268235697553409") return importFmbot(n as Message);
+// });
 
 client.on("interactionCreate", handleInteraction);
 

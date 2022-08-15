@@ -38,3 +38,32 @@ export async function returnGuildSettings(id: string): Promise<any> {
     6000
   );
 }
+
+export async function returnUserSettings(id: string): Promise<any> {
+  return wrapRedis(
+    `settings:user:${id}`,
+    () =>
+      prisma.user.upsert({
+        where: {
+          id,
+        },
+        update: {},
+        create: {
+          id,
+        },
+      }),
+    6000
+  );
+}
+
+export async function incrementUserSearches(id: string): Promise<boolean> {
+  const update = await prisma.user.upsert({
+    where: { id },
+    update: {
+      searches: { increment: 1 },
+    },
+    create: { id, searches: 1 },
+  });
+
+  return true; // TODO: wtf lol this doesn't return true always
+}
