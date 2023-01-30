@@ -13,7 +13,8 @@ const client = createTRPCProxyClient<AppRouter>({
 
 client.song.links
   .query({
-    title: "123",
+    title:
+      "https://open.spotify.com/track/0GO8y8jQk1PkHzS31d699N?si=6c61a3e96e864b2d",
   })
   .then((res) => {
     console.log(res);
