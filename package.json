@@ -16,6 +16,7 @@
     "@trpc/server": "^10.9.0",
     "axios": "^1.2.6",
     "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3",
     "envsafe": "^2.0.3",
     "express": "^4.18.2",
     "nodemon": "^2.0.20",

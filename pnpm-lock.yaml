@@ -7,6 +7,7 @@ specifiers:
   '@types/node': ^18.11.18
   axios: ^1.2.6
   discord.js: ^14.7.1
+  dotenv: ^16.0.3
   envsafe: ^2.0.3
   express: ^4.18.2
   nodemon: ^2.0.20
@@ -19,6 +20,7 @@ dependencies:
   '@trpc/server': 10.9.0
   axios: 1.2.6
   discord.js: 14.7.1
+  dotenv: 16.0.3
   envsafe: 2.0.3
   express: 4.18.2
   nodemon: 2.0.20
@@ -368,6 +370,11 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    dev: false
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /ee-first/1.1.1:

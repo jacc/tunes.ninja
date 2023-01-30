@@ -1,4 +1,5 @@
 import { Client } from "discord.js";
+import { env } from "../env";
 import { handleInteraction } from "./interactions";
 
 const client = new Client({
@@ -12,4 +13,4 @@ client.on("ready", () => {
 
 client.on("interactionCreate", handleInteraction);
 
-void client.login(process.env.DISCORD_TOKEN);
+void client.login(env.DISCORD_TOKEN);
