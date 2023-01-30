@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "../index";
+import { router, publicProcedure } from "../trpc";
 import { z } from "zod";
 
 export const songRouter = router({
