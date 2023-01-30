@@ -3,25 +3,28 @@ import { z } from "zod";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import express from "express";
 
-// created for each request
+import { songRouter } from "./router/song";
+
 const createContext = ({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) => ({}); // no context
 type Context = inferAsyncReturnType<typeof createContext>;
+
 const t = initTRPC.context<Context>().create();
 
+export const middleware = t.middleware;
+export const router = t.router;
+export const publicProcedure = t.procedure;
+
 export const appRouter = t.router({
-  getUser: t.procedure.input(z.string()).query((req) => {
-    req.input; // string
-    return { id: req.input, name: "Bilbo" };
-  }),
+  song: songRouter,
 });
 
 const app = express();
 
 app.use(
-  "/trpc",
+  "/api",
   trpcExpress.createExpressMiddleware({
     router: appRouter,
     createContext,
@@ -30,4 +33,4 @@ app.use(
 
 export type AppRouter = typeof appRouter;
 
-app.listen(4000);
+app.listen(3000);

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon ./server/index.ts"
+    "server": "nodemon ./server/index.ts",
+    "bot": "nodemon ./discord/index.ts"
   },
   "keywords": [],
   "author": "",
