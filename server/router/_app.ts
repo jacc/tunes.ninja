@@ -1,4 +1,4 @@
-import { router } from "../trpc";
+import { publicProcedure, router } from "../trpc";
 import { z } from "zod";
 import * as trpcExpress from "@trpc/server/adapters/express";
 
@@ -7,6 +7,15 @@ import { inferAsyncReturnType } from "@trpc/server";
 
 const appRouter = router({
   song: songRouter,
+  test: publicProcedure
+    .input(
+      z.object({
+        title: z.string(),
+      })
+    )
+    .query(async (req) => {
+      return { title: req.input.title };
+    }),
 });
 
 const createContext = ({
