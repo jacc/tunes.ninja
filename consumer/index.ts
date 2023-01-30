@@ -11,11 +11,10 @@ const client = createTRPCProxyClient<AppRouter>({
 //   console.log(res);
 // });
 
-client.song.links
-  .query({
-    title:
-      "https://open.spotify.com/track/0GO8y8jQk1PkHzS31d699N?si=6c61a3e96e864b2d",
-  })
-  .then((res) => {
-    console.log(res);
+(async () => {
+  const req = await client.song.links.query({
+    link: "https://open.spotify.com/track/0GO8y8jQk1PkHzS31d699N?si=6c61a3e96e864b2d",
   });
+
+  console.log(req);
+})();
