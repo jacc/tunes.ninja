@@ -1,20 +1,15 @@
 {
-  "dependencies": {
-    "@prisma/client": "^3.14.0",
-    "cross-env": "^7.0.3",
-    "prisma": "^3.14.0",
-    "spotify-web-api-node": "^5.0.2",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.2",
-    "zod": "^3.17.3"
-  },
+  "name": "template",
+  "version": "1.0.0",
+  "repository": "https://github.com/jacc/template.git",
+  "author": "Jack LaFond <hi@jack.link>",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child samurai/src/index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child src/index.ts",
     "build": "tsc",
-    "start": "cross-env NODE_ENV=production node .",
-    "generate": "prisma generate --schema .prisma/schema.prisma",
+    "start": "cross-env NODE_ENV=production node ./dist",
+    "generate": "prisma generate",
     "lint": "eslint .",
-    "services:up": "docker-compose -f docker-compose.dev.yml up -d&&yarn migrate --schema .prisma/schema.prisma",
+    "services:up": "docker-compose -f docker-compose.dev.yml up -d&&yarn migrate",
     "services:down": "docker-compose -f docker-compose.dev.yml down",
     "services:start": "docker-compose -f docker-compose.dev.yml start",
     "services:stop": "docker-compose -f docker-compose.dev.yml stop",
@@ -23,5 +18,26 @@
     "up:prod": "docker-compose up --build -d",
     "down:prod": "docker-compose down",
     "prod": "yarn migrate:deploy && yarn start"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.9.2",
+    "@types/node-schedule": "^1.3.2",
+    "@types/spotify-web-api-node": "^5.0.7",
+    "axios": "^0.26.0",
+    "cross-env": "^7.0.3",
+    "discord.js": "^14.0.0-dev.1656590649-525bf03",
+    "dotenv": "^10.0.0",
+    "ioredis": "^4.28.0",
+    "node-fetch": "^3.2.10",
+    "node-schedule": "^2.0.0",
+    "prisma": "^3.4.2",
+    "signale": "^1.4.0",
+    "spotify-web-api-node": "^5.0.2",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "@types/ioredis": "^4.28.1",
+    "@types/signale": "^1.4.2"
   }
 }
