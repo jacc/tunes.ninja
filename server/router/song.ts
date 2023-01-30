@@ -15,11 +15,12 @@ export const songRouter = router({
             x.includes("music.apple.com") ||
             x.includes("soundcloud.com")
           );
-        }, ""),
+        }, "Invalid URL - Only Spotify, Apple Music, and SoundCloud are supported"),
       })
     )
+
     .query(async (req) => {
-      const request = await axios.get<any>(
+      const request = await axios.get<any>( // TODO: make this not use any.
         urlcat(`https://api.song.link/v1-alpha.1/links?url=:title&key=:key`, {
           title: req.input.link,
           key: env.SONG_LINK_API_KEY,
