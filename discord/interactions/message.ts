@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 import { z } from "zod";
 import { trpc } from "../services/trpc";
+import { handleLinks } from "./song";
 
 const linkSchema = z.string().refine((x) => {
   return (
@@ -29,19 +30,19 @@ export async function handleMessage(message: Message): Promise<void> {
     switch (true) {
       case match.includes("open.spotify.com/track"):
         if (!guild.replyToSpotify) return;
-        console.log("we got a spotify track");
+        await handleLinks(message, match, guild.replyStyle);
         break;
       case match.includes("open.spotify.com/album"):
         if (!guild.replyToSpotify) return;
-        console.log("we got a spotify album");
+        await handleLinks(message, match, guild.replyStyle);
         break;
       case match.includes("music.apple.com"):
         if (!guild.replyToAppleMusic) return;
-        console.log("we got an apple music link");
+        await handleLinks(message, match, guild.replyStyle);
         break;
       case match.includes("soundcloud.com"):
         if (!guild.replyToSoundcloud) return;
-        console.log("we got a soundcloud link");
+        await handleLinks(message, match, guild.replyStyle);
         break;
     }
   });
