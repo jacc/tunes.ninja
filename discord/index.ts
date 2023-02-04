@@ -3,6 +3,7 @@ import { env } from "../env";
 import { chatCommandsMap, messageCommandsMap } from "./commands";
 import { handleInteraction } from "./interactions";
 import { prisma } from "./services/prisma";
+import { redis } from "./services/redis";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
@@ -33,8 +34,8 @@ client.on("messageCreate", async (message) => {
 
 prisma.$connect().then(async () => {
   console.log("Connected to Database");
-  // await redis.connect();
-  // signale.info("Connected to Redis");
+  await redis.connect();
+  console.log("Connected to Redis");
   await client.login(env.DISCORD_TOKEN);
   console.log("Connected to Discord");
 });
