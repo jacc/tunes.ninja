@@ -1,26 +1,24 @@
-import { Client, REST, Routes } from "discord.js";
+import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
 import { env } from "../env";
-import { chatCommandsMap } from "./commands";
+import { chatCommandsMap, messageCommandsMap } from "./commands";
 import { handleInteraction } from "./interactions";
+import { prisma } from "./services/prisma";
 
 const client = new Client({
-  intents: ["GuildMessages", "GuildPresences"],
-  allowedMentions: { parse: ["users", "roles"], repliedUser: false },
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 });
+const restClient = new REST({ version: "10" }).setToken(env.DISCORD_TOKEN);
 
 client.on("ready", async () => {
-  const rest = new REST({ version: "10" }).setToken(env.DISCORD_TOKEN);
-
-  const slashCommands = chatCommandsMap;
-
   try {
-    await rest.put(
+    await restClient.put(
       Routes.applicationGuildCommands(
         "842471257772523550",
         "840584537599770635"
       ),
-      { body: slashCommands }
+      { body: chatCommandsMap }
     );
+    console.log("Successfully registered application commands.");
   } catch (error) {
     console.error(error);
   }
@@ -29,5 +27,14 @@ client.on("ready", async () => {
 });
 
 client.on("interactionCreate", handleInteraction);
+client.on("messageCreate", async (message) => {
+  console.log(message);
+});
 
-void client.login(env.DISCORD_TOKEN);
+prisma.$connect().then(async () => {
+  console.log("Connected to Database");
+  // await redis.connect();
+  // signale.info("Connected to Redis");
+  await client.login(env.DISCORD_TOKEN);
+  console.log("Connected to Discord");
+});

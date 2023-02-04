@@ -1,0 +1,30 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Guild {
+    id       String @id
+    reply_to Int    @default(7)
+}
+
+model Stats {
+    searches Int @id
+}
+
+model User {
+    id          String @id
+    lastfm      String @default("")
+    searches    Int    @default(0)
+    description String @default("A mysterious user.")
+}
+
+model LinkedChannel {
+    id         String
+    platform   String
+    playlistID String @id
+}
