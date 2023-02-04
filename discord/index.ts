@@ -2,11 +2,16 @@ import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
 import { env } from "../env";
 import { chatCommandsMap, messageCommandsMap } from "./commands";
 import { handleInteraction } from "./interactions";
+import { handleMessage } from "./interactions/message";
 import { prisma } from "./services/prisma";
 // import { redis } from "./services/redis";
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 const restClient = new REST({ version: "10" }).setToken(env.DISCORD_TOKEN);
 
@@ -28,9 +33,7 @@ client.on("ready", async () => {
 });
 
 client.on("interactionCreate", handleInteraction);
-client.on("messageCreate", async (message) => {
-  console.log(message);
-});
+client.on("messageCreate", handleMessage);
 
 prisma.$connect().then(async () => {
   console.log("Connected to Database");

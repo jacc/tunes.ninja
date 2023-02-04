@@ -8,8 +8,17 @@ generator client {
 }
 
 model Guild {
-    id       String @id
-    reply_to Int    @default(7)
+    id                String      @id
+    enabled           Boolean     @default(true)
+    replyStyle        REPLY_STYLE @default(EMBED)
+    replyToSpotify    Boolean     @default(true)
+    replyToAppleMusic Boolean     @default(true)
+    replyToSoundcloud Boolean     @default(false)
+}
+
+enum REPLY_STYLE {
+    EMBED
+    MINIMAL
 }
 
 model Stats {

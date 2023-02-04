@@ -4,18 +4,11 @@ import * as trpcExpress from "@trpc/server/adapters/express";
 
 import { songRouter } from "./song";
 import { inferAsyncReturnType } from "@trpc/server";
+import { guildRouter } from "./guild";
 
 const appRouter = router({
   song: songRouter,
-  test: publicProcedure
-    .input(
-      z.object({
-        title: z.string(),
-      })
-    )
-    .query(async (req) => {
-      return { title: req.input.title };
-    }),
+  guild: guildRouter,
 });
 
 const createContext = ({
