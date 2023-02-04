@@ -12,20 +12,37 @@ const linkSchema = z.string().refine((x) => {
 }, "Invalid URL - Only Spotify, Apple Music, and SoundCloud are supported");
 
 export async function handleMessage(message: Message): Promise<void> {
-  if (message.author.bot) return;
-  if (!message.guild) return;
+  if (message.author.bot || !message.guild) return;
 
   const guild = await trpc.guild.heartbeat.query({
     id: message.guild.id,
   });
-
-  console.log(guild);
-
   if (!guild.enabled) return;
 
-  try {
-    const link = linkSchema.parse(message.content);
-    const query = await trpc.song.links.query({ link });
-    await message.reply(query.title);
-  } catch (error) {}
+  const link = linkSchema.safeParse(message.content);
+  if (!link.success) return;
+
+  const matches = link.data.match(/\bhttps?:\/\/\S+/gi);
+  if (!matches) return;
+
+  matches.map(async (match) => {
+    switch (true) {
+      case match.includes("open.spotify.com/track"):
+        if (!guild.replyToSpotify) return;
+        console.log("we got a spotify track");
+        break;
+      case match.includes("open.spotify.com/album"):
+        if (!guild.replyToSpotify) return;
+        console.log("we got a spotify album");
+        break;
+      case match.includes("music.apple.com"):
+        if (!guild.replyToAppleMusic) return;
+        console.log("we got an apple music link");
+        break;
+      case match.includes("soundcloud.com"):
+        if (!guild.replyToSoundcloud) return;
+        console.log("we got a soundcloud link");
+        break;
+    }
+  });
 }
